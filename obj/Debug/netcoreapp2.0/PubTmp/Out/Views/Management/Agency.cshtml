@@ -1,0 +1,43 @@
+﻿@model ASJ.ViewModels.Client.AgencyProfileViewModel
+@{
+    ViewData["Title"] = "Agency";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    div.item { margin-bottom: 10px;}
+
+    div#title {margin-bottom: 20px;}
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 class="mb-0">Agency Profile</h2>
+            <div class="goback"><a href="javascript:history.back()">Back</a> | <a href="@Url.Action("Agencies", "Management")">Profiles Index</a></div>
+            <h4 class="mt-30">@Model.Agency <small>(@Model.OrganizationId - @Model.Year)</small></h4>
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+    <div class="row">
+        <div class="col-md-9 col-sm-9 col-xs-7">
+            <div class="box-static box-border-top">
+                <div class="box-inner">
+                    <h5 class="noborder nomargin size-16">Address</h5>
+                    @Model.Address<br />
+                    @Model.City , @Model.State , @Model.Zip
+                    <hr />
+                    <h5 class="noborder nomargin size-16">Url</h5>
+                    <i class="fa fa-link"></i> @Model.Url
+                    <hr />
+                    <h5 class="noborder nomargin size-16">Information</h5>
+                    <ul class="list-inline">
+                        <li><i class="fa @(Model.IsTop150 ? "fa-check-square-o" : "fa-square-o")"></i> IsTop150</li>
+                        <li><i class="fa @(Model.IsRegional ? "fa-check-square-o" : "fa-square-o")"></i> IsRegional</li>
+                        <li><i class="fa @(Model.IsPrivate ? "fa-check-square-o" : "fa-square-o")"></i> IsPrivate</li>
+                    </ul>
+                </div>
+            </div>            
+        </div><!--end col-md-9-->
+        <div class="col-md-3 col-sm-3 col-xs-5">
+            <a class="btn btn-primary btn-block" href="@Url.Action("Index", "Form", new { instrumentId = Model.InstrumentId, organizationId = Model.OrganizationId, year = Model.Year })"><i class="fa fa-file-text-o"></i> Forms</a>
+        </div><!--end col-md-3-->
+    </div><!--end row-->
+</div><!--end container-->

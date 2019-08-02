@@ -1,0 +1,411 @@
+﻿@using System.Text.RegularExpressions
+@using ASJ.Utils
+
+@model List<ASJ.ViewModels.Client.AgencyProfileViewModel>
+@{
+    var Events = ViewData["Events"] as List<ASJ.Models.OrganizationEvent>;
+    var CaseNotes = ViewData["CaseNotes"] as List<ASJ.Models.OrganizationNotes>;
+
+    ViewData["Title"] = "Agency Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    div#content-body {
+        overflow: auto;
+        height: 100%;
+        position: relative;
+        margin-bottom: 140px;
+    }
+
+    table {
+        border: 1px solid;
+        width: 100%;
+    }
+
+        table#events, table#events td {
+            border: none;
+        }
+
+    th {
+        background-color: rgba(153, 153, 153, 1)
+    }
+
+    th, td {
+        padding: 5px 10px;
+        border: 1px solid;
+    }
+
+    a:link.tbl_link {
+        color: blue;
+        text-decoration: underline;
+    }
+
+    a.btn {
+        color: white;
+        text-decoration: none;
+    }
+
+    table, td {
+        border: none;
+    }
+
+        table#summary {
+            width: 55%;
+        }
+
+        td.col1 {
+            width: 38%;
+        }
+
+    #CaseNotes {
+        font-size: 0.9em;
+    }
+
+        #CaseNotes dt {
+            font-weight: normal;
+        }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6">
+            <h2 class="mb-0">Agency Profile</h2>
+            <div class="goback"><a href="javascript:history.back()">Back to Previous Page</a></div>
+            <div id="org_name" class="mt-30 mb-30">
+                <h4>@Model[0].Agency - @Model[0].State <small> (@Model[0].OrganizationId)</small></h4>
+            </div>
+        </div><!--end .col-sm-6-->
+        <div class="col-sm-6">
+            @if (User.IsInRole("managementmenu"))
+            {
+                <div class="info-bar info-bar-bordered">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <i class="fa fa-plug hidden-sm hidden-xs"></i>
+                                <h3>Special Case Code</h3>
+                                <p>@Model[0].SpecialCaseCode</p>
+                                <h3>Top 150</h3>
+                                <p>@(Model[0].IsTop150 ? "Yes" : "No")</p>
+                            </div>
+                            <div class="col-xs-6">
+                                <i class="fa fa-key hidden-sm hidden-xs"></i>
+                                <h3>Username</h3>
+                                <p>@Model[0].UserName</p>
+                                <h3>Password</h3>
+                                <p>@Model[0].Password</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div><!--end summary col-->
+    </div><!--end top row-->
+</div><!--end top container-->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                <div class="box-title margin-bottom-0">
+                    <h4 class="padding-10">Current Data Collection</h4>
+                </div>
+                <table class="table table-hover nomargin">
+                    <thead>
+                        <tr>
+                            <th style="width: 5em;">Year</th>
+                            <th>Status</th>
+                            <th>Last Modified Date</th>
+                            <th>Data Entry</th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        @if (@Model.Count != 0 && @Model[0].Year == @ViewBag.referenceYear)
+                        {
+                            <td>@Model[0].Year</td>
+                            <td>@Model[0].dataStatus</td>
+                            <td>
+                                @if (@Model[0].Followup.FormModifiedDate != null)
+                                {
+                                    @Model[0].Followup?.FormModifiedDate?.ToString("MM/dd/yyyy")
+                                }
+                                                    </td>
+                            <td><a target="_blank" id="open_form" href="@Url.Action("Index", "Form", new { instrumentId =  Model[0].InstrumentId, organizationId = Model[0].OrganizationId, year = @Model[0].Year, RTIdataEntry = true })" class="btn btn-primary btn-xs"><i class="fa fa-link"></i>Edit Data</a></td>;
+                            <td class="text-left">
+                                @if (@Model[0].dataStatus != "Not Started")
+                                {
+                                    <a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[0].InstrumentId, organizationId = @Model[0].OrganizationId, year = @Model[0].Year })" target="_blank" class="btn btn-primary btn-xs"><i class="fa fa-file-pdf-o"></i>Open</a>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            @if (Model.Count == 0)
+                            {
+                                @* If there is no current data collection, put out a blank line *@
+                                <td colspan="4">&nbsp;</td>
+                            }
+                        }
+                    </tr>
+                </table>
+            </div><!--end current DC box-->
+            <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                <div class="box-title margin-bottom-0">
+                    <h4 class="padding-10">Past Data Collection Periods</h4>
+                </div>
+                <table class="table table-hover table-striped nomargin">
+                    <thead>
+                        <tr>
+                            <th style="width: 5em;">Year</th>
+                            <th>PDF</th>
+                            <th>Submission Status</th>
+                            <th>Status</th>
+                            <th>Quality</th>
+                            <th>Last Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (@Model.Count <= 1)
+                        {
+                            @* If there is no past data collection, put out a blank line *@
+                            <tr><td colspan="6">&nbsp;</td></tr>
+                        }
+                        else
+                        {
+                            var startIndex = 0;
+                            @if (@Model[0].Year == @ViewBag.referenceYear)
+                            {
+                                startIndex = 1;
+                            }
+
+                            @for (int i = startIndex; i <= @Model.Count - 1; i++)
+                            {
+                                <tr>
+                                    <td>@Model[i].Year</td>
+                                    <td class="text-left">
+                                        @if (@Model[i].dataStatus != "Not Started")
+                                        {
+                                            <a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[i].InstrumentId, organizationId = @Model[i].OrganizationId, year = @Model[i].Year })" target="_blank" class="btn btn-primary btn-xs"><i class="fa fa-file-pdf-o"></i>Open</a>
+                                        }
+                                    </td>
+                                    <td>@Model[i].dataStatus</td>
+                                    <td>@Model[i].ASJStatusCode</td>
+                                    <td>@Model[i].ASJQualityCode</td>
+                                    <td>@Model[i].ModifiedDate.ToString("MM/dd/yyyy")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div><!--end past DC box-->
+            @if (User.IsInRole("managementmenu"))
+            {
+                <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                    <div class="box-title margin-bottom-0">
+                        <h4 class="padding-10">Facilities</h4>
+                    </div>
+                    <table class="table table-hover nomargin">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Private</th>
+                                <th>Regional</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model[0].Facilities.Count == 0)
+                            {
+                                <tr><td colspan="7">&nbsp;</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var f in Model[0].Facilities)
+                                {
+                                    <tr>
+                                        <td>@f.FacilityName</td>
+                                        <td>@f.FacilityCity</td>
+                                        <td>@f.FacilityState</td>
+                                        <td>@(f.IsPrivate ? "Yes" : "No")</td>
+                                        <td>@(f.IsRegional ? "Yes" : "No")</td>
+                                        <td>@(f.FacilityStatusCode == 20 ? "Inactive" : "")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div><!--end facilities box-->
+
+                <div id="CaseNotes" class="box-static box-transparent box-border-top box-bordered padding-0">
+                    <div class="box-title margin-bottom-0">
+                        <h4 class="padding-10">Case Notes</h4>
+                    </div>
+                    <dl id="notes" class="padding-10">
+                        @foreach (var cn in CaseNotes)
+                        {
+                            <dt>@cn.Note</dt>
+                            <dd>
+                                Created By: @cn.CreatedBy<br />
+                                Created On: @cn.CreatedOn
+                            </dd>
+                        }
+                    </dl>
+                </div><!--end case notes box-->
+            }
+        </div><!--end left column-->
+        <div class="col-sm-5">
+            @if (User.IsInRole("managementmenu"))
+            {
+                <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                    <div class="box-title margin-bottom-0">
+                        <h4 class="padding-10">Followup Status</h4>
+                    </div>
+                    <table id="followupStatus" class="table table-hover table-condensed nomargin">
+                        <tr>
+                            <td class="col1">Agency StatusCode:</td>
+                            <td>@Model[0].Followup?.AgencyStatusCodeId</td>
+                            <td class="col1">DQReady:</td>
+                            <td>@Model[0].Followup?.DQReady</td>
+                        </tr>
+                        <tr>
+                            <td class="col1">Agency QualityCode:</td>
+                            <td>@Model[0].Followup?.ASJQualityCode</td>
+                            <td class="col1">DQReadyDate:</td>
+                            <td>@Model[0].Followup?.DQReadyDate?.ToString("MM/dd/yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td class="col1">AssignedTo:</td>
+                            <td>@Model[0].Followup?.AssignedTo</td>
+                            <td class="col1">MaxAttempts:</td>
+                            <td>@Model[0].Followup?.MaxAttempts</td>
+                        </tr>
+                        <tr>
+                            <td class="col1">AssignedToNR:</td>
+                            <td>@Model[0].Followup?.AssignedToNR</td>
+                            <td class="col1">MaxAttemptsNR:</td>
+                            <td>@Model[0].Followup?.NRMaxAttempts</td>
+                        </tr>
+                        <tr>
+                            @*For future years, just need to enter the correct InstrumentID, current year instrument ID and previous year instrument ID, see example below, 0 means no instrument ID--year 2017*@
+                            @*<td class="col1" colspan="2"><a href="@Url.Action("QCExplanation", "DQFU", new { organizationId = @Model[0].OrganizationId, iid=1, previid=0 })">Reasons or iDQFU</a></td>*@
+                            <td class="col1" colspan="2"><a target="_blank" href="@Url.Action("QCExplanation", "DQFU", new { organizationId = @Model[0].OrganizationId})">Reasons or iDQFU</a></td>
+                            <td class="col1" colspan="2"><a target="_blank" href="@Url.Action("QCDetail", "DQFU", new { organizationId = @Model[0].OrganizationId })">Errors: @Model[0].QCDetails.Count</a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                    <div class="box-title margin-bottom-0">
+                        <h4 class="padding-10">Email</h4>
+                    </div>
+                    <div class="padding-10 row">
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" value="@Model[0].LoggedInUserEmail" disabled="disabled" />
+                        </div>
+                        <div class="col-sm-6">
+                            @if (@Model[0].Followup?.AgencyStatusCodeId == 5)
+                            {
+                                <a href="@Url.Action("SendDQFUEmail", "Management", new { organizationId = @Model[0].OrganizationId, year = Model[0].Year })" class="btn btn-primary">Send NR Email</a>@*<a href="#" class="btn btn-primary margin-left-10">Button 2</a>*@
+
+
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("SendDQFUEmail", "Management", new { organizationId = @Model[0].OrganizationId, year = Model[0].Year })" class="btn btn-primary">Send DQFU Email</a>@*<a href="#" class="btn btn-primary margin-left-10">Button 2</a>*@
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+                <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                    <div class="box-title margin-bottom-0">
+                        <h4 class="pl-20 pr-20 pt-10 pb-10">Events</h4>
+                    </div>
+                    @{ int EventCount = Events.Count > 2 ? 2 : Events.Count;}
+                    <dl id="events" class="padding-20 margin-bottom-0">
+                        @for (int i = 0; i <= EventCount - 1; i++)
+                        {
+                            <dt>@Events[i].EventDate</dt>
+                            <dd>@Events[i].EventNotes</dd>
+                        }
+                    </dl>
+                    <div class="text-right padding-20"><a target="_blank" href="@Url.Action("EventsTracker", "Event", new { organizationId = Model[0].OrganizationId, year = Model[0].Year })">More...</a></div>
+                </div><!--end Events box-->
+
+            <div class="box-static box-transparent box-border-top box-bordered padding-0">
+                <div class="box-title margin-bottom-0">
+                    <h4 class="pl-20 pr-20 pt-10 pb-10" style="display:inline;">Contacts</h4>(<a target="_blank" href="@Url.Action("Contacts", "Contact", new { organizationId = Model[0].OrganizationId, year = Model[0].Year })">Edit</a>)
+                </div>
+                <div class="padding-20">
+                    @{ var NumContact = 0; }
+                    @foreach (var contact in Model[0].Contacts)
+                    {
+                        @if (contact.PrimaryContact || contact.AgencyHead)
+                        {
+                            ++NumContact;
+                            <div>
+                                <strong>@contact.Firstname  @contact.LastName</strong>
+                                @if (contact.PrimaryContact)
+                                {
+                                    <small>(Primary Contact)</small>
+                                }
+                                @if (contact.AgencyHead)
+                                {
+                                    <small> (Agency Head)</small>
+                                }
+
+                            </div>
+                            <div class="empty-hide">Title: <span>@contact.Title</span></div>
+                            <div class="empty-hide">
+                                Phone: <span>
+                                    @if (@contact.Phone != "" && contact.Phone != null)
+                                    {
+                                        @Extensions.formatPhoneNumber(@contact.Phone);
+                                    }
+                                </span>
+                                <span class="empty-hide">
+                                    @if (@contact.PhoneExt != "" && contact.PhoneExt != null)
+                                    {
+                                        @:&nbsp; Ext: @contact.PhoneExt
+                                    }
+                                </span>
+                            </div>
+
+                            <div class="empty-hide">Email: <span>@contact.Email</span></div>
+                            <hr />
+                        }
+                    }
+
+                    @if (ViewBag.DSB != null)
+                    {
+                        <div class="empty-hide"><strong>DS:</strong> <span>@ViewBag.DSB.Title&nbsp;@ViewBag.DSB.Name</span></div>
+                        <div class="empty-hide">
+                            Phone: <span>
+                                @if (ViewBag.DSB.Phone != "" && ViewBag.DSB.Phone != null)
+                                {
+                                    @Extensions.formatPhoneNumber(ViewBag.DSB.Phone);
+                                }
+                            </span>
+                        </div>
+
+                        <div class="empty-hide">Email: <span>@ViewBag.DSB.email</span></div>
+                        <hr />
+                    }
+
+                    @if (Model[0].Contacts.Count > @NumContact)
+                    {
+                        <div class="text-right"><a target="_blank" href="@Url.Action("Contacts", "Contact", new { organizationId = Model[0].OrganizationId, year = Model[0].Year })">More...</a></div>
+                    }
+                </div>
+            </div><!--end Contacts box-->
+        </div><!--end right column-->
+    </div>
+</div><!--end container-->
+
+@section Scripts {
+    <script type="text/JavaScript">
+        $(document).ready(function () {
+            $('.empty-hide span:empty').parent().hide();
+        });//end document ready
+    </script>
+}

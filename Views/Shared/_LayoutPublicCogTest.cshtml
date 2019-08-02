@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Death in Custody Reporting Act Collection Program</title>
+
+    <environment include="Development, Staging, Production">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/css/essentials-cogtest.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/layout-cogtest.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/header-1-cogtest.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/color_scheme/blue.css" rel="stylesheet" type="text/css" id="color_scheme" />
+        <link rel="stylesheet" href="~/css/site-cogtest.css" />
+    </environment>
+
+    <environment exclude="Development, Staging, Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        @*<link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />*@
+
+    </environment>
+</head>
+<body class="smoothscroll enable-animation">
+
+    <!-- wrapper -->
+    <div id="wrapper">
+
+        <!--
+            AVAILABLE HEADER CLASSES
+
+            Default nav height: 96px
+            .header-md 		= 70px nav height
+            .header-sm 		= 60px nav height
+
+            .noborder 		= remove bottom border (only with transparent use)
+            .transparent	= transparent header
+            .translucent	= translucent header
+            .sticky			= sticky header
+            .static			= static header
+            .dark			= dark header
+            .bottom			= header on bottom
+
+            shadow-before-1 = shadow 1 header top
+            shadow-after-1 	= shadow 1 header bottom
+            shadow-before-2 = shadow 2 header top
+            shadow-after-2 	= shadow 2 header bottom
+            shadow-before-3 = shadow 3 header top
+            shadow-after-3 	= shadow 3 header bottom
+
+            .clearfix		= required for mobile menu, do not remove!
+
+            Example Usage:  class="clearfix sticky header-sm transparent noborder"
+        -->
+        <header id="topNav">
+
+            <div class="container">
+                <!-- Mobile Menu Button -->
+                <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <!-- BUTTONS -->
+                <ul class="pull-right nav nav-pills nav-second-main"></ul>
+                <!-- /BUTTONS -->
+                <!-- Logo -->
+                <a class="logo pull-left" href="index.html">
+                    <img src="~/images/_smarty/logo_dark.png" alt="" />
+                </a>
+
+
+
+                <!--
+                    Top Nav
+
+                    AVAILABLE CLASSES:
+                    submenu-dark = dark sub menu
+                -->
+                <div class="navbar-collapse pull-right nav-main-collapse collapse submenu-dark">
+                    <nav class="nav-main">
+
+                        <!--
+                            NOTE
+
+                            For a regular link, remove "dropdown" class from LI tag and "dropdown-toggle" class from the href.
+                            Direct Link Example:
+
+                            <li>
+                                <a href="#">HOME</a>
+                            </li>
+                        -->
+                        <ul id="topMain" class="nav nav-pills nav-main">
+                            <li>
+                                <a href="@Url.Action("Index","Home")">HOME</a>
+                            </li>
+
+                            <!-- Reference Forms -->
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" href="#">
+                                    FORMS
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h4><i class="fa fa-folder"></i> 2018</h4>
+                                    </li>
+                                    <li><a href="~/pdfs/COG_2018.pdf" target="_blank"><i class="fa fa-file-pdf-o"></i> Jail Survey Cognitive Test</a></li>
+                                </ul>
+                            </li><!-- end Reference Forms -->
+
+                            <!-- SEARCH -->
+                            @*<li class="search">
+            <a href="javascript:;">
+                <i class="fa fa-search"></i>
+            </a>
+            <div class="search-box">
+                <form action="page-search-result-1.html" method="get">
+                    <div class="input-group">
+                        <input type="text" name="src" placeholder="Search" class="form-control" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </li>*@
+                            <!-- /SEARCH -->
+                            <!--
+        MENU ANIMATIONS
+            .nav-animate-fadeIn
+            .nav-animate-fadeInUp
+            .nav-animate-bounceIn
+            .nav-animate-bounceInUp
+            .nav-animate-flipInX
+            .nav-animate-flipInY
+            .nav-animate-zoomIn
+            .nav-animate-slideInUp
+
+            .nav-hover-animate 		= animate text on hover
+
+            .hover-animate-bounceIn = bounceIn effect on mouse over of main menu
+    -->
+
+                        </ul>
+
+                    </nav>
+                </div>
+
+            </div>
+        </header>
+
+
+        <section class="nopadding-bottom">
+            <div class="container">
+
+                @RenderBody()
+            </div>
+        </section>
+
+        <!-- /wrapper -->
+    </div>
+    <footer id="footer">
+        @*<div class="container">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <!-- Footer Logo -->
+                    <h3>Bureau of Justice Statistics</h3>
+
+                    <!-- Small Description -->
+                    <p>This Web site is funded through a grant from the Bureau of Justice Statistics, Office of Justice Programs, U.S. Department of Justice. Neither the U.S. Department of Justice nor any of its components operate, control, are responsible for, or necessarily endorse, this Web site (including, without limitation, its content, technical infrastructure, and policies, and any services or tools provided).</p>
+                </div>
+
+                <div class="col-md-6">
+                    <div style="text-align:right;margin-top: 20px;">
+                        <p>
+                            OMB No 1121-0339 Exp. 1/31/2019<br />
+                            Software Version 1.1
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="copyright">
+            <div class="container">
+                <ul class="pull-right nomargin list-inline mobile-block">
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li>&bull;</li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+                &copy; All Rights Reserved, RTI International
+            </div>
+        </div>
+    </footer>
+    <!-- /FOOTER -->
+    <!-- SCROLL TO TOP -->
+    <a href="#" id="toTop"></a>
+
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="inner">
+            <span class="loader"></span>
+        </div>
+    </div><!-- /PRELOADER -->
+
+    <environment include="Development, Staging, Production">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script type="text/javascript">var plugin_path = 'plugins/';</script>
+        <script src="~/js/scripts.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development, Staging, Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+
+
+
+
+
+
+
+</html>
+

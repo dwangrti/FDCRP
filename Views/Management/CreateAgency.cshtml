@@ -1,0 +1,80 @@
+﻿@model ASJ.ViewModels.Client.AgencyProfileViewModel
+@{
+    ViewData["Title"] = "New Agency";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Add New Agency <span class="small"> (Temporary disabled)</span></h2>
+            <form asp-controller="Management" asp-action="CreateAgency" method="post" asp-antiforgery="true">
+                @if (Model.Error != null)
+                {
+                    <div class="alert alert-warning margin-bottom-10">
+                        <span asp-validation-for="Error"></span>
+                    </div>
+                }
+                <fieldset>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label for="OrganizationId">Organization ID:</label>
+                                <input class="form-control" type="number" asp-for="OrganizationId" />
+                                <span asp-validation-for="OrganizationId" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-2 col-sm-2">
+                                <label for="Year">Year:</label>
+                                <input class="form-control" type="number" asp-for="Year" />
+                                <span asp-validation-for="Year" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6">
+                                <label for="Agency">Agency Name:</label>
+                                <input class="form-control" type="text" asp-for="Agency" />
+                                <span asp-validation-for="Agency" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <label for="Address">Address:</label>
+                                <input class="form-control" type="text" asp-for="Address" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                <label for="City">City:</label>
+                                <input class="form-control" type="text" asp-for="City" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="State">Select State:</label>
+                                @Html.DropDownListFor(x => x.State, ASJ.Utils.Extensions.GetStatesList(), new { @class = "form-control" })
+                                <span asp-validation-for="State" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Zip">Zip:</label>
+                                <input class="form-control" type="text" asp-for="Zip" />
+                                <span asp-validation-for="Zip" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <label for="Url">Url:</label>
+                                <input class="form-control" type="text" asp-for="Url" />
+                                <span asp-validation-for="Url" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                @*<input id="submitBtn" class="btn btn-primary" type="submit" value="Create Agency" />*@
+            </form>
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->

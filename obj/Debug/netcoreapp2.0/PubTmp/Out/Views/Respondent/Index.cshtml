@@ -1,0 +1,194 @@
+﻿@model List<ASJ.ViewModels.Respondent.PocViewModel>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+@{
+    ViewData["Title"] = "POC Home";
+}
+@if (Context.Request.Host.Host.Contains("jailsurvey"))
+{
+    <style>
+
+        div#content-body {
+            height: 100%;
+            position: relative;
+            margin-bottom: 140px;
+        }
+    </style>
+}
+
+else
+{
+    <style>
+
+        div#content-body {
+            overflow: auto;
+            height: 100%;
+            position: relative;
+            margin-bottom: 140px;
+        }
+    </style>
+}
+
+<style>
+
+    .agencyheader {
+        width: 40%;
+    }
+
+    table {
+        border: 1px solid;
+        width: 100%;
+        font-size: 1.25em;
+    }
+
+    th {
+        background-color: rgba(153, 153, 153, 1)
+    }
+
+    th, td {
+        padding: 5px 10px;
+        border: 1px solid;
+    }
+
+    a:link.tbl_link {
+        color: blue;
+        text-decoration: underline;
+    }
+
+    a.btn {
+        color: white;
+        text-decoration: none;
+        font-size: 1em;
+    }
+
+    table, td {
+        border: none;
+    }
+</style>
+<div class="container">
+    <div class="row center">
+        <div class="center-block agencyheader">
+            <div id="org_name">
+                <h4>@Model[0].Agency - @Model[0].State <small> (@Model[0].OrganizationId)</small></h4>
+            </div>
+        </div>
+    </div><br />
+
+
+
+
+    <div class="row center">
+        <div class="center-block w-50p">
+            <table class="table table-hover">
+                @*<thead>
+                        <tr class="blue-head">
+                            <th style="width: 175px;">Year</th>
+                            <th>Due</th>
+                            @if (!Context.Request.Host.Host.Contains("jailsurvey"))
+                            {
+                                <th>Data Status</th>
+                                <th>Data Quality</th>
+                             }
+                            <th> </th>
+                            <th>PDF</th>
+                        </tr>
+                    </thead>*@
+                <tbody>
+                    <tr>
+                        @if (@Model.Count > 0)
+                        {
+                            var startIndex = 0;
+                            @if (@Model[0].Year == @ViewBag.referenceYear)
+                            {
+                                //Display currrent data collection if exist
+                            <tr>
+                                <td>@Model[0].Year</td>
+                                @if (@Model[0].dataStatus == "Not Started")
+                                {
+                                    <td><a id="start_form" href="@Url.Action("Instructions", "Form", new { instrumentId =  Model[0].InstrumentId, organizationId = Model[0].OrganizationId, year = @ViewBag.referenceYear })" class="btn btn-primary btn-sm">Enter Data</a></td>
+                                    <td>&nbsp;</td>
+                                    <td><a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[0].InstrumentId, organizationId = @Model[0].OrganizationId, year = @Model[0].Year })" target="_blank" class="btn btn-primary btn-sm">View form</a></td>
+                                    <td>&nbsp;</td>
+
+                                }
+                                else if (@Model[0].dataStatus == "Final")
+                                {
+                                    <td><a id="start_form" href="@Url.Action("Instructions", "Form", new { instrumentId =  Model[0].InstrumentId, organizationId = Model[0].OrganizationId, year = @ViewBag.referenceYear })" class="btn btn-primary btn-sm">Enter Data</a></td>
+                                    <td>&nbsp;</td>
+                                    <td><a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[0].InstrumentId, organizationId = @Model[0].OrganizationId, year = @Model[0].Year })" target="_blank" class="btn btn-primary btn-sm">View form</a></td>
+                                    <td>
+                                        @if (Model[0].Response != null && Model[0].Response.ResponseVariable == "iDQFUFlag" && Model[0].Response.ResponseValue == "True")
+                                        {
+                                            <a href="@Url.Action("Index", "DQFU", new { organizationId = @Model[0].OrganizationId, iid = @Model[0].InstrumentId })" class="btn btn-primary btn-sm">Compare data</a>
+                                        }
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td><a id="start_form" href="@Url.Action("Instructions", "Form", new { instrumentId =  Model[0].InstrumentId, organizationId = Model[0].OrganizationId, year = @ViewBag.referenceYear })" class="btn btn-primary btn-sm">Enter Data</a></td>
+                                    <td><a id="resume_form" href="@Url.Action("Index", "Form", new { instrumentId = @Model[0].InstrumentId, organizationId = @Model[0].OrganizationId, year = @Model[0].Year, resume=true })" class="btn btn-primary btn-sm">Resume</a></td>
+                                    <td><a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[0].InstrumentId, organizationId = @Model[0].OrganizationId, year = @Model[0].Year })" target="_blank" class="btn btn-primary btn-sm">View form</a></td>
+                                    <td>
+                                        @if (Model[0].Response != null && Model[0].Response.ResponseVariable == "iDQFUFlag" && Model[0].Response.ResponseValue == "True")
+                                        {
+                                            <a href="@Url.Action("Index", "DQFU", new { organizationId = @Model[0].OrganizationId, iid = @Model[0].InstrumentId })" class="btn btn-primary btn-sm">Compare data</a>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                            startIndex = 1;
+                        }
+                        @* Display past data collection *@
+                            @for (int i = startIndex; i <= @Model.Count - 1; i++)
+                            {
+                                <tr>
+                                    <td>@Model[i].Year</td>
+                                    @if (@Model[i].dataStatus != "Not Started")
+                                    {
+                                        <td colspan="2">Closed</td>
+                                        <td><a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @Model[i].InstrumentId, organizationId = @Model[i].OrganizationId, year = @Model[i].Year })" target="_blank" class="btn btn-primary btn-sm">View form</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@Model[i].dataStatus</td>
+
+                                        <td></td>
+                                    }
+                                    <td></td>
+                                </tr>
+                            }
+
+                        }
+                        else
+                        {
+                            @* No data collection, put out a blank line *@
+                            <tr><td colspan="4">&nbsp;</td></tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div><!--end .col-sm-12-->
+        </div><!--end row-->
+        @Html.Partial("_DataSuppliedBy", (ASJ.ViewModels.Form.DataSupplierViewModel)ViewBag.DatasupplierVM)
+    </div><!--end container-->
+
+
+
+    <script>
+        $(document).ready(function () {
+            //The menu option 'Enter Data' will trigger relevant start_form link.
+            $("#poc_submit_data").click(function () {
+                $("#start_form")[0].click();
+            });
+        });
+    </script>

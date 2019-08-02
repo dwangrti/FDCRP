@@ -1,0 +1,86 @@
+﻿@model ASJ.ViewModels.Security.CreateRoleOrRoleGroupViewModel
+
+@{
+    ViewData["Title"] = "Create Role Or RoleGroup";
+    var roleGroups = ViewData["RoleGroups"] as List<ASJ.Models.RoleGroup>;
+    var allRoles = ViewData["AllRoles"] as Microsoft.EntityFrameworkCore.Internal.InternalDbSet<ASJ.Services.AppIdentityRole>;
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Create Roles</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="box-static box-border-top">
+                <div class="box-inner">
+                    <h5 class="noborder nomargin size-16">Add Role</h5>                    
+                    <form asp-controller="Security" asp-action="CreateRole" method="post" asp-antiforgery="true" class="form-inline">
+                        <div class="form-group">
+                            <input class="form-control" type="text" asp-for="NewRole" placeholder="New Role Name" />
+                            <input class="btn btn-primary" type="submit" value="Create Role" />
+                            @if (Model.NewRoleAdded)
+                            {
+                                <div class="alert alert-success">Role Added.</div>
+                            }
+                                @if (Model.NewRoleError)
+                            {
+                                <div class="alert alert-danger">Role Not Added.</div>
+                            }
+                        </div>
+                    </form>
+                    <hr />
+                    <h5 class="special-header">Role Names</h5>
+                    <ul class="list-group side-nav">
+                        @foreach (var role in allRoles)
+                        {
+                            <li class="list-group-item">@role.Name</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="box-static box-border-top">
+                <div class="box-inner">
+                    <h5 class="noborder nomargin size-16">Add Role Group</h5>
+                    <form asp-controller="Security" asp-action="CreateRoleGroup" method="post" class="form-inline">
+                        <div class="form-group">
+                            <input class="form-control" type="text" asp-for="NewRoleGroup" placeholder="New Role Group Name" />
+                            <input class="btn btn-primary" type="submit" value="Create Role Group" />
+                            @if (Model.NewRoleGroupAdded)
+                            {
+                                <div class="alert alert-success">Role Group Added.</div>
+                            }
+                            @if (Model.NewRoleGroupError)
+                            {
+                                <div class="alert alert-success">Role Group Not Added.</div>
+                            }
+                        </div>
+                    </form>
+                    <hr />
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Role Group Names</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var rolegrp in roleGroups)
+                            {
+                                <tr>
+                                    <td>@rolegrp.RoleGroupID</td>
+                                    <td>@rolegrp.RoleGroupName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!--end .col-sm-6-->
+    </div><!--end row-->
+</div><!--end container-->

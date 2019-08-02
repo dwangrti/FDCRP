@@ -1,0 +1,93 @@
+﻿@model ASJ.ViewModels.Event.EventsTrackerViewModel
+@{
+    ViewData["Title"] = "New Agency";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+  .form-group {
+      margin-bottom: 20px;
+      margin-left: 20px;
+      width: 45%;
+      float: left;
+      text-align: left;
+  }
+  #submitBtn {
+      margin: 20px auto 0;
+      display: block;
+      font-size: 14px;
+  }
+  .input-lg {
+      border-radius: 0; 
+      width: 100%; 
+      min-width: 200px;
+      font-size: 14px;
+  }
+  select.input-lg { border: 1px solid #999;}
+  #form_container {
+    background-color: #fff;
+    max-width: 800px;
+    min-width: 280px;
+    margin: 50px auto 10px;
+    padding: 20px 20px 0;
+    color: #858b8e;
+    box-shadow: 6px 6px 6px rgba(0,0,0,0.2);
+    border: 1px solid #858b8e;
+  }
+</style>
+<h2 class="mb-10">Edit Event</h2>
+<div class="mb-20 goback"><a href="javascript:history.back()">Back to Previous Page</a></div>
+<div class="container" id="form_container">
+    <form asp-controller="Event" asp-action="EventEdit" method="post" asp-antiforgery="true">
+        @if (Model.Error != null)
+    {
+        <div class="alert-danger" style="padding: 10px; margin-bottom: 10px;">
+            <span asp-validation-for="Error"></span>
+        </div>
+}
+        <div>
+            @*<div class="form-group">
+                <label class="control-label">OrganizationEvent ID:</label>
+                <input class="input-lg" type="number" asp-for="OrganizationEventId" disabled="disabled" />
+                <span asp-validation-for="OrganizationEventId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Year:</label>
+                <input class="input-lg" type="number" asp-for="Year"  />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Agency Name:</label>
+                <input class="input-lg" type="text" asp-for="Agency"  />
+                <span asp-validation-for="Agency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Address:</label>
+                <input class="input-lg" type="text" asp-for="Address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">City:</label>
+                <input class="input-lg" type="text" asp-for="City"  />
+                <span asp-validation-for="City" class="text-danger"></span><br />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Select State:</label>
+                @Html.DropDownListFor(x => x.State, ASJ.Utils.Extensions.GetStatesList(), new { @class = "input-lg" })
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Zip:</label>
+                <input class="input-lg" type="text" asp-for="Zip" />
+                <span asp-validation-for="Zip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Url:</label>
+                <input class="input-lg" type="text" asp-for="Url"  />
+                <span asp-validation-for="Url" class="text-danger"></span>
+            </div>*@
+        </div>
+        <div class="clearfix"></div>
+        <input id="submitBtn" class="btn btn-primary" type="submit" value="Create Agency" />
+        
+    </form>
+</div>

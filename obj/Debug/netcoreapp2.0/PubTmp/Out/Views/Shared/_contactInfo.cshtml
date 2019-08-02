@@ -1,0 +1,29 @@
+﻿<!-- Contact info -->
+<div id="topBar">
+    <div class="container">
+        <ul class="top-links list-inline pull-right" id="contact_info">
+            @if (User.Identity.Name != null)
+            {
+            <li class="text-welcome">
+                <a class="dropdown-toggle no-text-underline" data-toggle="dropdown" href="#">Logged in as <strong>@User.Identity.Name</strong></a>
+                <ul class="dropdown-menu">
+                    <li><a tabindex="-1" href="@Url.Action("Logout","Home")"><i class="glyphicon glyphicon-off"></i> LOGOUT</a></li>
+                </ul>
+            </li>
+            }
+            <li><i class="fa fa-envelope"></i> <a href="mailto:doj-dcra@rti.org">doj-dcra@rti.org</a></li>
+            <li><i class="fa fa-phone"></i> <span>1-866-354-4992</span></li>
+        </ul>
+    </div>
+</div>
+<!--end Contact info-->
+@*
+<div class="pull-right" id="contact_info">
+    <div><a href="mailto:bjsasj@rti.org">bjsasj@rti.org</a> | 1-866-354-4992</div>
+    @if (User.Identity.Name != null)
+    {
+    <div>Logged in as: @User.Identity.Name</div>
+    }
+</div>
+<div class="clearfix"></div>
+*@

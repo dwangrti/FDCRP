@@ -1,0 +1,841 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model ASJ.ViewModels.Form.DQFUViewModel
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+
+@{
+    ViewData["Title"] = "Data Quality Checks";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <form asp-controller="Form" method="post" id="iDQFU">
+                <h2>Review</h2>
+                <p>Please review the key data points you entered for 2018. Large differences from last year’s values are indicated. You may edit your entries as needed or provide explanations in the textboxes. If you believe the data presented for last year (2017) are incorrect or in error please click "Add Explanation" and indicate this in the textbox.</p>
+                @Html.HiddenFor(model => model.InsturmentId)
+                @Html.HiddenFor(model => model.Values.OrganizationID)
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                </th>
+                                <th>
+                                </th>
+                                <th class="text-center" colspan="2">
+                                    2018
+                                </th>
+                                <th class="text-center">
+                                    2017
+                                </th>
+                                <th>
+                                    Potential Issues
+                                </th>
+                                <th>
+                                    Explanations
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td >Confined Population,<br /> midyear</td>
+                                <td class="text-right;" >
+                                    Total: <br />
+                                    Male: <br />
+                                    Female: 
+                                </td>
+                                <td class="text-right" style="padding-right: 10px;">
+                                    @if (Model.FlagConpop)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRconfpop) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @( string.Format("{0:n0}", @Model.Values.CURRconfpop) )<br />
+                                    }
+                                    @if (Model.FlagMale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRconfmale) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRconfmale))<br />
+                                    }
+
+                                    @if (Model.FlagFemale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRconffemale) + "</strong>")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRconffemale) )
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FlagConpop)
+                                    {
+                                        <a id="page1Link" onclick="gotoInstrument(1)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;"); }
+                                    <br />
+                                    @if (Model.FlagMale)
+                                    {
+                                        <a id="page4Link" onclick="gotoInstrument(4)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");}
+                                    <br />
+                                    @if (Model.FlagFemale)
+                                    {
+                                        <a id="page4Link" onclick="gotoInstrument(4)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");}
+                                </td>
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVconfpop) <br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVconfmale)<br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVconffemale)
+                                </td>
+                                @if (Model.FlagConpop && Model.FlagMale && Model.FlagFemale)
+                                {
+                                    <td>2018 total, male, and female confined population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagConpop && Model.FlagMale && !Model.FlagFemale)
+                                {
+                                    <td>2018 total and male confined population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagConpop && !Model.FlagMale && Model.FlagFemale)
+                                {
+                                    <td>2018 total and female confined population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagConpop && Model.FlagMale && Model.FlagFemale)
+                                {
+                                    <td>2018 male and female confined population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagConpop && !Model.FlagMale && !Model.FlagFemale)
+                                {
+                                    <td>2018 total confined population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagConpop && Model.FlagMale && !Model.FlagFemale)
+                                {
+                                    <td>2018 male confined population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagConpop && !Model.FlagMale && Model.FlagFemale)
+                                {
+                                    <td>2018 female confined population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagConpop && !Model.FlagMale && !Model.FlagFemale)
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @if (Model.iDQFU_Conpop_Explanation != null && Model.iDQFU_Conpop_Explanation.Length > 0)
+                                        {
+                                            <div id="rowConpopExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_conpop_reason" asp-for="@Model.iDQFU_Conpop_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showConpopExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowConpopExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_conpop_reason" asp-for="@Model.iDQFU_Conpop_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                    </td>
+
+                                }
+
+                            </tr>
+
+                            <tr>
+                                <td>Nonconfined Population,<br /> midyear</td>
+                                <td class="text-right;"></td>
+
+                                @if (Model.FlagNconpop)
+                                {
+                                    <td class="text-right"> @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRnconpop) + "</strong><br />")</td>
+                                }
+                                else
+                                {
+                                    <td class="text-right" style="padding-right: 20px;"> @string.Format("{0:n0}", @Model.Values.CURRnconpop)</td>
+                                }
+                                <td>
+                                    @if (Model.FlagNconpop)
+                                    {
+                                        <a id="page14Link" onclick="gotoInstrument(14)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;");}
+                                    <br />
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVnconpop)
+                                </td>
+                                @if (Model.FlagNconpop)
+                                {
+                                    <td>2018 nonconfined population is significantly different than 2017.</td>
+                                    <td>                                       
+                                        @if (Model.iDQFU_Nconpop_Explanation != null && Model.iDQFU_Nconpop_Explanation.Length > 0)
+                                        {
+                                            <div id="rowNconpopExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_nconpop_reason" asp-for="@Model.iDQFU_Nconpop_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showNconpopExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowNconpopExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_nconpop_reason" asp-for="@Model.iDQFU_Nconpop_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                  </td>
+                                }
+                                else
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                            </tr>
+
+                            @*<tr id="rowNconpopExplanation" style="display:none">
+                                <td colspan="4">
+                                    <textarea rows="2" cols="80" id="iDQFU_nconpop_reason" asp-for="@Model.iDQFU_Nconpop_Explanation" class="form-control"></textarea>
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary btn-md" type="submit" name="back" formaction="/DQFU/SaveReason" value="Save" />
+                                </td>
+                            </tr>*@
+
+
+                            <tr>
+                                <td>Average Daily Population</td>
+                                <td class="text-right;">
+                                    Total: <br />
+                                    Male: <br />
+                                    Female:
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @if (Model.FlagAdp)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadp) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadp))<br />
+                                    }
+                                    @if (Model.FlagAdpMale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadpmale) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadpmale) )<br />
+                                    }
+
+                                    @if (Model.FlagAdpFemale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadpfemale) + "</strong>")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadpfemale))
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FlagAdp)
+                                    {
+                                        <a id="page11Link" onclick="gotoInstrument(11)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;");
+                                    }
+                                    <br />
+                                    @if (Model.FlagAdpMale)
+                                    {
+                                        <a id="page11Link" onclick="gotoInstrument(11)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                    }
+                                    <br />
+                                    @if (Model.FlagAdpFemale)
+                                    {
+                                        <a id="page11Link" onclick="gotoInstrument(11)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                    }
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVadp) <br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVadpmale) <br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVadpfemale)
+                                </td>
+                                @if (Model.FlagAdp && Model.FlagAdpMale && Model.FlagAdpFemale)
+                                {
+                                    <td>2018 total, male, and female average daily population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdp && Model.FlagAdpMale && !Model.FlagAdpFemale)
+                                {
+                                    <td>2018 total and male average daily population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdp && !Model.FlagAdpMale && Model.FlagAdpFemale)
+                                {
+                                    <td>2018 total and female average daily population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdp && Model.FlagAdpMale && Model.FlagAdpFemale)
+                                {
+                                    <td>2018 male and female average daily population are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdp && !Model.FlagAdpMale && !Model.FlagAdpFemale)
+                                {
+                                    <td>2018 total average daily population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdp && Model.FlagAdpMale && !Model.FlagAdpFemale)
+                                {
+                                    <td>2018 male average daily population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdp && !Model.FlagAdpMale && Model.FlagAdpFemale)
+                                {
+                                    <td>2018 female average daily population are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdp && !Model.FlagAdpMale && !Model.FlagAdpFemale)
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                                else
+                                {
+                                       <td>
+                                        @if (Model.iDQFU_Adp_Explanationn != null && Model.iDQFU_Adp_Explanationn.Length > 0)
+                                        {
+                                            <div id="rowAdpExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_adp_reason" asp-for="@Model.iDQFU_Adp_Explanationn" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showAdpExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowAdpExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_adp_reason" asp-for="@Model.iDQFU_Adp_Explanationn" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                    </td>
+                                    @*<td>
+                                        <a id="page11Link" onclick="gotoInstrument(11)">
+                                            Edit 2018 Entry <br />
+                                        </a>
+                                        <br />
+                                        <a id="reason_adp" onclick="showAdpExplanation()">
+                                            Provide Explanation
+                                        </a>
+                                    </td>*@
+
+                                }
+
+                            </tr>
+                            @*<tr id="rowAdpExplanation" style="display:none">
+                                <td colspan="4">
+                                    <textarea rows="2" cols="80" id="iDQFU_adp_reason" asp-for="@Model.iDQFU_Adp_Explanationn" class="form-control"></textarea>
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary btn-md" type="submit" name="back" formaction="/DQFU/SaveReason" value="Save" />
+                                </td>
+                            </tr>*@
+
+
+
+                            <tr>
+                                <td>Annual Admissions</td>
+                                <td class="text-right;">
+                                    Total: <br />
+                                    Male: <br />
+                                    Female:
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @if (Model.FlagAdmis)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadmis) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadmis) )<br />
+                                    }
+                                    @if (Model.FlagAdmisMale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadmismale) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadmismale))<br />
+                                    }
+
+                                    @if (Model.FlagAdmisFemale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRadmisfemale) + "</strong>")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRadmisfemale))
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FlagAdmis)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;");
+                                }
+                                    <br />
+                                    @if (Model.FlagAdmisMale)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                }
+                                    <br />
+                                    @if (Model.FlagAdmisFemale)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                }
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVadmis) <br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVadmismale)<br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVadmisfemale)
+                                </td>
+                                @if (Model.FlagAdmis && Model.FlagAdmisMale && Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 total, male, and female admissions are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdmis && Model.FlagAdmisMale && !Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 total and male admissions are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdmis && !Model.FlagAdmisMale && Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 total and female admissions are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdmis && Model.FlagAdmisMale && Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 male and female admissions are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagAdmis && !Model.FlagAdmisMale && !Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 total admissions are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdmis && Model.FlagAdmisMale && !Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 male admissions are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdmis && !Model.FlagAdmisMale && Model.FlagAdmisFemale)
+                                {
+                                    <td>2018 female admissions are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagAdmis && !Model.FlagAdmisMale && !Model.FlagAdmisFemale)
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @if (Model.iDQFU_Admis_Explanation != null && Model.iDQFU_Admis_Explanation.Length > 0)
+                                        {
+                                            <div id="rowAdmisExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_admis_reason" asp-for="@Model.iDQFU_Admis_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showAdmisExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowAdmisExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_admis_reason" asp-for="@Model.iDQFU_Admis_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                    </td>
+                                    @*<td>
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            Edit 2018 Entry <br />
+                                        </a>
+                                        <br />
+                                        <a id="reason_admis" onclick="showAdmisExplanation()">
+                                            Provide Explanation
+                                        </a>
+                                    </td>*@
+
+                                }
+                            </tr>
+                            @*<tr id="rowAdmisExplanation" style="display:none">
+                                <td colspan="4">
+                                    <textarea rows="2" cols="80" id="iDQFU_admis_reason" asp-for="@Model.iDQFU_Admis_Explanation" class="form-control"></textarea>
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary btn-md" type="submit" name="back" formaction="/DQFU/SaveReason" value="Save" />
+                                </td>
+                            </tr>*@
+
+
+
+                            <tr>
+                                <td>Annual Discharges</td>
+                                <td class="text-right;">
+                                    Total: <br />
+                                    Male: <br />
+                                    Female:
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @if (Model.FlagRelease)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRrelease) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRrelease))<br />
+                                    }
+                                    @if (Model.FlagReleaseMale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRreleasemale) + "</strong><br />")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRreleasemale))<br />
+                                    }
+
+                                    @if (Model.FlagReleaseFemale)
+                                    {
+                                        @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRreleasefemale) + "</strong>")
+                                    }
+                                    else
+                                    {
+                                        @(string.Format("{0:n0}", @Model.Values.CURRreleasefemale))
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FlagRelease)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;");
+                                }
+                                    <br />
+                                    @if (Model.FlagReleaseMale)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                }
+                                    <br />
+                                    @if (Model.FlagReleaseFemale)
+                                    {
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw("&nbsp; ");
+                                }
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVrelease)  <br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVreleasemale)<br />
+                                    @string.Format("{0:n0}", @Model.Values.PREVreleasefemale)
+                                </td>
+                                @if (Model.FlagRelease && Model.FlagReleaseMale && Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 total, male, and female discharges are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagRelease && Model.FlagReleaseMale && !Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 total and male discharges are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagRelease && !Model.FlagReleaseMale && Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 total and female discharges are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagRelease && Model.FlagReleaseMale && Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 male and female discharges are significantly different than 2017.</td>
+                                }
+                                @if (Model.FlagRelease && !Model.FlagReleaseMale && !Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 total discharges are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagRelease && Model.FlagReleaseMale && !Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 male discharges are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagRelease && !Model.FlagReleaseMale && Model.FlagReleaseFemale)
+                                {
+                                    <td>2018 female discharges are significantly different than 2017.</td>
+                                }
+                                @if (!Model.FlagRelease && !Model.FlagReleaseMale && !Model.FlagReleaseFemale)
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        @if (Model.iDQFU_Release_Explanation != null && Model.iDQFU_Release_Explanation.Length > 0)
+                                        {
+                                            <div id="rowReleaseExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_release_reason" asp-for="@Model.iDQFU_Release_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showReleaseExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowReleaseExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_release_reason" asp-for="@Model.iDQFU_Release_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                    </td>
+                                    @*<td>
+                                        <a id="page13Link" onclick="gotoInstrument(13)">
+                                            Edit 2018 Entry <br />
+                                        </a>
+                                        <br />
+                                        <a id="reason_release" onclick="showReleaseExplanation()">
+                                            Provide Explanation
+                                        </a>
+
+                                    </td>*@
+
+                                }
+                            @*</tr>
+                            <tr id="rowReleaseExplanation" style="display:none">
+                                <td colspan="4">
+                                    <textarea rows="2" cols="80" id="iDQFU_release_reason" asp-for="@Model.iDQFU_Release_Explanation" class="form-control"></textarea>
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary btn-md" type="submit" name="back" formaction="/DQFU/SaveReason" value="Save" />
+                                </td>
+                            </tr>*@
+
+
+
+                            <tr>
+                                <td>Rated Capacity</td>
+                                <td></td>
+                                @if (Model.FlagRated)
+                                {
+                                    <td class="text-right"> @Html.Raw("<strong class='alert-danger'>" + string.Format("{0:n0}", @Model.Values.CURRrated) + "</strong><br />")</td>
+                                }
+                                else
+                                {
+                                    <td class="text-right" style="padding-right: 20px;"> @string.Format("{0:n0}", @Model.Values.CURRrated)</td>
+                                }
+                                <td>
+                                    @if (Model.FlagRated)
+                                    {
+                                        <a id="page12Link" onclick="gotoInstrument(12)">
+                                            edit
+                                        </a>
+                                    }
+                                    else
+                                    { @Html.Raw(" &nbsp;");
+                                    }
+                                    <br />
+                                </td>
+
+                                <td class="text-right" style="padding-right: 20px;">
+                                    @string.Format("{0:n0}", @Model.Values.PREVrated)
+                                </td>
+                                @if (Model.FlagRated)
+                                {
+                                    <td>2018 rated capacity is significantly different than 2017.</td>
+                                     <td>                                       
+                                        @if (Model.iDQFU_Rated_Explanation != null && Model.iDQFU_Rated_Explanation.Length > 0)
+                                        {
+                                            <div id="rowRatedExplanation" style="display:block">
+                                                <textarea rows="2" cols="60" id="iDQFU_rated_reason" asp-for="@Model.iDQFU_Rated_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a id="reason_confpop" onclick="showRatedExplanation()">
+                                                Add Explanation
+                                            </a>
+                                            <div id="rowRatedExplanation" style="display:none">
+                                                <textarea rows="2" cols="80" id="iDQFU_rated_reason" asp-for="@Model.iDQFU_Rated_Explanation" class="form-control"></textarea>
+                                            </div>
+                                        }
+                                  </td>
+                                    @*<td>
+                                        <a id="page12Link" onclick="gotoInstrument(12)">
+                                            Edit 2018 Entry <br />
+                                        </a>
+                                        <br />
+                                        <a id="reason_rated" onclick="showRatedExplanation()">
+                                            Provide Explanation
+                                        </a>
+
+                                    </td>*@
+                                }
+                                else
+                                {
+                                    <td>--</td>
+                                    <td>--</td>
+                                }
+                            </tr>
+                            @*<tr id="rowRatedExplanation" style="display:none">
+                                <td colspan="4">
+                                    <textarea rows="2" cols="80" id="iDQFU_rated_reason" asp-for="@Model.iDQFU_Rated_Explanation" class="form-control"></textarea>
+                                </td>
+                                <td>
+                                    <input class="btn btn-primary btn-md" type="submit" name="back" formaction="/DQFU/SaveReason" value="Save" />
+                                </td>
+                            </tr>*@
+
+                            <tr>
+                                <td colspan="6">
+                                </td>
+                                <td >
+                                    <input class="btn btn-primary btn-lg" type="submit" name="back" formaction="/DQFU/SaveReason" value="Submit" />
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <br />
+                    @*<p>Thanks for submitting your agency’s data to the ASJ! We will review your data and contact you if we have any questions.</p>*@
+                </div>
+            </form>
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+<script type="text/JavaScript">
+
+    function gotoInstrument(pageNo) {
+
+        var instrumentId = $("#InsturmentId").val();
+        var organizationId = $("#Values_OrganizationID").val();
+
+        var baseurl = window.location.origin;  //+ window.location.pathname
+        var pageURL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=2018&page=" + pageNo;
+        //window.location.href = pageURL;
+        if (pageNo == 1) {
+            $(page1Link).attr("href", pageURL);
+        }
+        if (pageNo == 4) {
+            $(page4Link).attr("href", pageURL);
+        }
+        else if (pageNo == 11) {
+            $(page11Link).attr("href", pageURL);
+        }
+        else if (pageNo == 12) {
+            $(page12Link).attr("href", pageURL);
+        }
+        else if (pageNo == 13) {
+            $(page13Link).attr("href", pageURL);
+        }
+        else if (pageNo == 14) {
+            $(page14Link).attr("href", pageURL);
+        }
+        else if (pageNo == 15) {
+            $(page15Link).attr("href", pageURL);
+        }
+    }
+
+    function showConpopExplanation() {
+        $("#rowConpopExplanation").show();
+        $("#rowConpopExplanation").css("display", "table-row");
+    }
+
+    function showNconpopExplanation() {
+        $("#rowNconpopExplanation").show();
+        $("#rowNconpopExplanation").css("display", "table-row");
+    }
+
+    function showAdpExplanation() {
+        $("#rowAdpExplanation").show();
+        $("#rowAdpExplanation").css("display", "table-row");
+    }
+    
+    function showAdmisExplanation() {
+        $("#rowAdmisExplanation").show();
+        $("#rowAdmisExplanation").css("display", "table-row");
+    }
+
+    function showReleaseExplanation() {
+        $("#rowReleaseExplanation").show();
+        $("#rowReleaseExplanation").css("display", "table-row");
+    }
+
+    function showRatedExplanation() {
+        $("#rowRatedExplanation").show();
+        $("#rowRatedExplanation").css("display", "table-row");
+    }
+
+</script>

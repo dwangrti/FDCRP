@@ -1,0 +1,230 @@
+﻿@model ASJ.ViewModels.Form.DataSupplierViewModel
+
+@{
+    ViewData["Title"] = "Form Completed By;";
+
+}
+
+
+<div id="dataSupplierNotices" style="padding-bottom: 20px;">
+
+    <style>
+        #instructions {
+            border: 1px solid;
+            padding: 20px;
+            width: 90%;
+            margin: 0 auto;
+        }
+    </style>
+
+
+    <h2>Form Completed By&mdash;</h2>
+
+    <hr />
+    <div id="datasupplier">
+        <div class="md-10">
+
+            <form id="fmDataSuppliedBy" asp-controller="Form">
+                @Html.HiddenFor(model => model.Instrument.InstrumentId)
+                @Html.HiddenFor(model => model.Organization.OrganizationId)
+                @Html.HiddenFor(model => model.Organization.Year)
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="DataSupplierId" />
+
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span id="valName" class="dsb_val_error text-danger">Please enter a valid Name</span>
+
+                    </div>
+                    <div class="col-sm-5">
+
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span id="valTitle" class="dsb_val_error text-danger">Please enter a valid Title</span>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <label asp-for="Address" class="control-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span id="valAddress" class="dsb_val_error text-danger">Please enter a valid Address</span>
+
+                    </div>
+                    <div class="col-sm-5">
+                        <label asp-for="Phone" class="control-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span id="valPhone" class="dsb_val_error text-danger">Please enter a valid Phone number</span>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-1">
+                        <label asp-for="City" class="control-label"></label>
+                        <input asp-for="City" class="form-control" />
+                        <span id="valCity" class="dsb_val_error text-danger">Please enter a valid City</span>
+
+                    </div>
+                    <div class="col-sm-5">
+                        <label asp-for="Fax" class="control-label"></label>
+                        <input asp-for="Fax" class="form-control" />
+                        <span id="valFax" class="dsb_val_error text-danger">Please enter a valid Fax number</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-2 col-sm-offset-1">
+                        <label asp-for="State" class="control-label"></label>
+                        <input asp-for="State" class="form-control" />
+                        <span id="valState" class="dsb_val_error text-danger">Please enter a valid State</span>
+                    </div>
+                    <div class="col-sm-3">
+                        <label asp-for="Zip" class="control-label"></label>
+                        <input asp-for="Zip" class="form-control" />
+                        <span id="valZip" class="dsb_val_error text-danger">Please enter a valid Zip</span>
+                    </div>
+                    <div class="col-sm-5">
+                        <label asp-for="email" class="control-label"></label>
+                        <input asp-for="email" class="form-control" />
+                        <span id="valEmail" class="dsb_val_error text-danger">Please enter a valid Email</span>
+                    </div>
+                </div>
+
+                @if (Model.Organization.OrganizationType.FormTypeDescription.Contains("COGTEST"))
+                {
+
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-1">
+
+                            <label asp-for="FacilityName" class="control-label"></label>
+                            <input asp-for="FacilityName" class="form-control" />
+                        </div>
+                        <div class="col-sm-5">
+                            &nbsp;
+                        </div>
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @*<div>
+            <a asp-action="Index">Back to List</a>
+        </div>*@
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+    }
+    <script>
+
+        function showDataSuppliedBy() {
+            $("#dataSupplierNotices").removeClass("hidden");
+            $("#showDataSupplier").addClass("hidden");
+        }
+
+        function hideDataSuppliedBy() {
+            $("#dataSupplierNotices").addClass("hidden");
+            $("#showDataSupplier").removeClass("hidden");
+            window.scrollTo(0, 0);
+        }
+
+        $("#fmDataSuppliedBy").submit(function (event) {
+            var validate = validateTheForm();
+
+            if (validate) {
+                var $form = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: 'Form/SaveDSB', // <-- Where should this point?
+                    data: $form.serialize(),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    dataType: "json"
+                }).done(function (data) {
+
+                    //these are on the form view
+                    $("#dataSupplierNotices").addClass("hidden");
+                    $("#showDataSupplier").removeClass("hidden");
+                    window.scrollTo(0, 0);
+                });
+            }
+
+            return false;
+        });
+        $(document).ready(function () {
+            //first validation messages
+            $(".dsb_val_error").each(function () {
+                $(this).hide();
+            });
+
+            $('#closeDSBBtn').click(function () {
+                //$("#notices").addClass("hidden");
+                //$("#questionForm").removeClass("hidden");
+                hideDataSuppliedBy();
+
+            });
+            $('#showDataSupplier').click(function () {
+                //$("#notices").addClass("hidden");
+                //$("#questionForm").removeClass("hidden");
+                showDataSuppliedBy();
+
+            });
+            hideDataSuppliedBy();
+
+        });
+
+
+        function validateTheForm() {
+            //first hide everything
+            $(".dsb_val_error").each(function () {
+                $(this).hide();
+            });
+            var validate = true;
+            //email
+            var pattern = /^[\w\-\.\+]+\@@[a-zA-Z0-9\.\-]+\.[a-zA-z0-9]{2,4}$/;
+            if ($('#email').val() != "" && $('#email').val() != null && $('#email').val() != "undefined" && !pattern.test($('#email').val())) {
+                validate = false;
+                $("#valEmail").attr("display", "block");
+            }
+
+            //phone
+            pattern = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+            if ($('#Phone').val() != "" && $('#Phone').val() != null && $('#Phone').val() != "undefined" && !pattern.test($('#Phone').val())) {
+                validate = false;
+                $("#valPhone").show();
+            }
+            //fax
+            pattern = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+            if ($('#Fax').val() != "" && $('#Fax').val() != null && $('#Fax').val() != "undefined" && !pattern.test($('#Fax').val())) {
+                validate = false;
+                $("#valFax").show();
+            }
+            //zipcode
+            pattern = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
+            if ($('#Zip').val() != "" && $('#Zip').val() != null && $('#Zip').val() != "undefined" && !pattern.test($('#Zip').val())) {
+                validate = false;
+                $("#valZip").show();
+            }
+
+            return validate;
+        }
+    </script>
+    <hr />
+
+    <div class="text-center"><button type="button" id="closeDSBBtn" class="btn btn-primary ">Close Form Completed By</button></div>
+
+</div>
+
+<div class="text-center" style="padding-bottom: 20px;">
+    <a href="#" id="showDataSupplier" class="btn btn-primary btn-sm"><i class="fa fa-info-circle"></i> Form Completed By</a>
+</div>

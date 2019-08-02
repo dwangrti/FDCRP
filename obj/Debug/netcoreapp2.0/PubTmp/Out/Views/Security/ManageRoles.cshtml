@@ -1,0 +1,51 @@
+﻿@model ASJ.ViewModels.Security.ManageRolesViewModel
+
+@{
+    ViewData["Title"] = "Manage Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Manage Roles</h2>
+        </div>
+    </div>
+    <form asp-controller="Security" asp-action="AddRoleToRoleGroup" method="post">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="box-static box-border-top">
+                    <div class="box-inner">
+                        <h5 class="noborder nomargin size-16">Manage Role Groups</h5>
+                        <label asp-for="SelectedRoleGroupID" class="control-label"></label>
+                        <select asp-for="SelectedRoleGroupID" class="form-control" asp-items="@(new SelectList(Model.RoleGroups,"RoleGroupID","RoleGroupName","select"))">
+                            <option>Select</option>
+                        </select>
+                        <label class="control-label margin-top-10">Add existing role to this role group:</label>
+                        <select asp-for="SelectedRoleForRoleGroup" class="form-control" asp-items="@(new SelectList(Model.AllRoles,"Name","Name"))">
+                            <option>Select</option>
+                        </select>
+                        <input class="btn btn-primary margin-top-10" type="submit" value="Add Role to RoleGroup" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                @if (Model.RolesForRoleGroup != null)
+                {
+                    <ul class="list-group side-nav">
+                        @foreach (ASJ.ViewModels.Security.RoleGroupRoleViewModel r in Model.RolesForRoleGroup)
+                        {
+                            <li class="list-group-item"><a href='@Url.Action("DeleteRoleFromRoleGroup", "Security" , new {id = r.RoleGroupId, role = r.RoleId})'><span class="glyphicon glyphicon-remove" data-toggle="tooltip" data-placement="left" title="Remove this role."></span></a> @r.RoleName</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+   
+<script>
+    $("#SelectedRoleGroupID").change(function () {
+        var selValue = $("#SelectedRoleGroupID").val();
+        window.location.href = '@Url.Action("ManageRoles", "Security" , new {id = "ID"})'.replace("ID", parseInt(selValue));
+    });
+</script>

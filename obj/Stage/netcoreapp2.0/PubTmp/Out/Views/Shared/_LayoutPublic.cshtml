@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119464739-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119464739-1');
+    </script>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Death in Custody Reporting Act Collection Program</title>
+
+    <!-- WEB FONTS : use %7C instead of | (pipe) -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600%7CRaleway:300,400,500,600,700%7CLato:300,400,400italic,600,700" rel="stylesheet" type="text/css" />
+
+    <environment include="Development, Staging, Production">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link href="~/css/essentials.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/layout_rw.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/header-1.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/color_scheme/blue.css" rel="stylesheet" type="text/css" id="color_scheme" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+
+    <environment exclude="Development, Staging, Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        @*<link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />*@
+
+    </environment>
+</head>
+<body class="smoothscroll enable-animation">
+
+    <!-- wrapper -->
+    <div id="wrapper">
+
+        <div id="header" class="navbar-toggleable-md static clearfix">
+
+            <header id="topNav">
+
+                <div class="container">
+
+                    <!-- Mobile Menu Button -->
+                    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Logo -->
+                    <a class="logo float-left" href="~/">
+                        <h1>Federal Deaths in Custody</h1>
+                        <!--<img src="~/images/bjs_header.png" alt="Federal Death in Custody Reporting Program; Bureau of Justice Statistics" /> -->
+                        <!--<img src="~/images/_smarty/logo_dark.png" alt="BJS: Bureau of Justice Statistics; U.S. Department of Justice" />-->
+                        <!--<h1>Annual Survey of Jails</h1>-->
+                    </a>
+
+                    <div class="navbar-collapse collapse float-right nav-main-collapse submenu-dark">
+                        <nav class="nav-main">
+
+                            <!--
+                        NOTE
+
+                        For a regular link, remove "dropdown" class from LI tag and "dropdown-toggle" class from the href.
+                        Direct Link Example:
+
+                        <li>
+                            <a href="#">HOME</a>
+                        </li>
+                    -->
+                            <ul id="topMain" class="nav nav-pills nav-main">
+                                <li>
+                                    <a href="@Url.Action("Index","Home")">HOME</a>
+                                </li>
+
+                                @Html.Partial("_referenceForms")
+
+                                <li>
+                                    <a href="@Url.Action("FAQ","Home")">FAQs</a>
+                                </li>
+                                @Html.Partial("_MoreInformation")
+                                <!-- SEARCH -->
+                                @*<li class="search">
+            <a href="javascript:;">
+                <i class="fa fa-search"></i>
+            </a>
+            <div class="search-box">
+                <form action="page-search-result-1.html" method="get">
+                    <div class="input-group">
+                        <input type="text" name="src" placeholder="Search" class="form-control" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </li>*@
+                                <!-- /SEARCH -->
+
+                            </ul>
+
+                        </nav>
+                    </div>
+
+                </div>
+            </header>
+
+            @Html.Partial("_contactInfo")
+
+        </div><!--end #header-->
+        
+        <section>
+            @RenderBody()
+        </section><!--end body section-->
+    </div>
+    <!-- /wrapper -->
+    <footer id="footer">
+        <div class="container">
+            <div class="row">
+                @*<div class="col-sm-9 col-xs-8">
+                    <!-- Footer Header
+                    <h3>Bureau of Justice Statistics</h3> -->
+                    <!-- Small Description -->
+                    <p>This Web site is funded through a grant from the Bureau of Justice Statistics, Office of Justice Programs, U.S. Department of Justice. Neither the U.S. Department of Justice nor any of its components operate, control, are responsible for, or necessarily endorse, this Web site (including, without limitation, its content, technical infrastructure, and policies, and any services or tools provided).</p>
+                </div>*@
+
+                <div class="col-sm-3 col-xs-4">
+                    <div class="text-right">
+                        @*<p>
+                            <small>
+                                OMB No 1121-0094 Exp. 1/31/2019<br />
+                                Software Version 1.1
+                            </small>
+                        </p>*@
+                        <p>&copy; All Rights Reserved, RTI International</p>
+                    </div>
+                </div>
+            </div>
+        </div><!--end #footer container-->
+
+        <!--<div class="copyright">
+            <div class="container">
+                &copy; All Rights Reserved, RTI International
+            </div>
+        </div>-->
+    </footer>
+    <!-- /FOOTER -->
+    <!-- SCROLL TO TOP -->
+    <a href="#" id="toTop"></a>
+
+
+    <environment include="Development, Staging, Production">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script type="text/javascript">var plugin_path = '/plugins/';</script>
+        <script src="~/js/scripts.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development, Staging, Production">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+
+
+
+
+
+
+
+</html>

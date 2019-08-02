@@ -1,0 +1,187 @@
+﻿@model ASJ.ViewModels.Contact.ContactsViewModel
+@{
+    ViewData["Title"] = "New Contact";
+    var LookupContactTypes = ViewData["ContactTypeList"] as IList<LookupContactType>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 class="mb-10">Edit Contact</h2>
+            <div class="mb-20 goback"><a href="javascript:history.back()">Back to Previous Page</a></div>
+            <form asp-controller="Contact" asp-action="EditContact" method="post" asp-antiforgery="true">
+
+                <div class="row">
+                    <input id="importAddr" class="btn btn-primary" type="button" value="Import Data from Past Contact" onclick="importAddress(event)" />
+                </div>
+                @if (Model.Error != null)
+                {
+                    <div class="alert alert-warning margin-bottom-10">
+                        <span asp-validation-for="Error"></span>
+                    </div>
+                }
+                <fieldset>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-4 col-sm-4">
+                                <label for="FirstName">First Name: </label>
+                                <input class="form-control" type="text" asp-for="FirstName" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <label for="LastName">Last Name:</label>
+                                <input class="form-control" type="text" asp-for="LastName" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-2 col-sm-2">
+                                <label for="Title">Title:</label>
+                                <input class="form-control" type="text" asp-for="Title" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-2 col-sm-2">
+                                <label for="Salutation">Salutation:</label>
+                                <input class="form-control" type="text" asp-for="Salutation" />
+                                <span asp-validation-for="Salutation" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6">
+                                <label for="Address1">Address Ln 1:</label>
+                                <input class="form-control" type="text" asp-for="Address1" />
+                                <span asp-validation-for="Address1" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <label for="Address2">Address Ln 2:</label>
+                                <input class="form-control" type="text" asp-for="Address2" />
+                                <span asp-validation-for="Address2" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                <label for="City">City:</label>
+                                <input class="form-control" type="text" asp-for="City" />
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="State">Select State:</label>
+                                @Html.DropDownListFor(x => x.State, ASJ.Utils.Extensions.GetStatesList(), new { @class = "form-control" })
+                                <span asp-validation-for="State" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Zip">Zip:</label>
+                                <input class="form-control" type="text" asp-for="Zip" />
+                                <span asp-validation-for="Zip" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                <label for="Phone">Phone:</label>
+                                <input class="form-control" type="text" asp-for="Phone" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="PhoneExt">Phone Ext:</label>
+                                <input class="form-control" type="text" asp-for="PhoneExt" />
+                                <span asp-validation-for="PhoneExt" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="Email">Email:</label>
+                                <input class="form-control" type="text" asp-for="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            @*<div class="col-md-6">
+            <span for="ContactTypeId">Contact Type: </span>
+            <select name="ContactTypeId" class="form-control">
+                @foreach (var ix in LookupContactTypes)
+                {
+                    if (ix.ContactTypeId == @Model.ContactTypeId)
+                    {
+                        <option value="@ix.ContactTypeId" selected>@ix.ContacTypeDescription</option>
+                    }
+                    else
+                    {
+                        <option value="@ix.ContactTypeId">@ix.ContacTypeDescription</option>
+                    }
+                }
+            </select>
+        </div>*@
+                            <div class="col-md-2">
+                                <span><input type="checkbox" asp-for="AgencyHead" /> Agency Head</span>
+                                <span asp-validation-for="AgencyHead" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-2">
+                                <span><input type="checkbox" asp-for="PrimaryContact" /> Primary Contact</span>
+                                <span asp-validation-for="PrimaryContact" class="text-danger"></span>
+                            </div>
+                            @*
+        <div class="col-md-2">
+            <span><input type="checkbox" asp-for="BackupContact" /> Backup Contact</span>
+            <span asp-validation-for="BackupContact" class="text-danger"></span>
+        </div>
+
+                            *@
+
+                        </div>
+                    </div>
+                </fieldset>
+                <input type="hidden" name="OrganizationContactId" value=@Model.OrganizationContactId />
+                <input type="hidden" name="OrganizationId" value=@Model.OrganizationId />
+                <input type="hidden" name="OrganizationYear" value=@Model.OrganizationYear />
+                <input id="submitBtn" class="btn btn-primary" type="submit" value="Save Changes" />
+            </form>
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+<script>
+    function importAddress() {
+        var orgId = $('input[name="OrganizationId"]').val();;
+        event.preventDefault();
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Contact/GetAddress',
+            dataType: 'json',
+            data: { organizationId: orgId, __RequestVerificationToken: token },
+            success: function (resp) {
+                //console.log(resp);
+                var emlToUse = resp.value.email;
+                if (emlToUse) {
+                    var atSybmbolPos = emlToUse.indexOf("@@");
+                    if (atSybmbolPos != -1) {
+                        emlToUse = emlToUse.substring(atSybmbolPos, emlToUse.length);
+                        $('#Email').val(emlToUse);
+                    }
+                }
+
+                $('#Address1').val(resp.value.address1);
+                $('#Address2').val(resp.value.address2);
+                $('#City').val(resp.value.city);
+                if (resp.value.state) {
+                    $('#State').val(resp.value.state.trim());
+                }
+
+                $('#Zip').val(resp.value.zip);
+                //$('#Phone').val(resp.value.phone);
+                //$('#PhoneExt').val(resp.value.phoneExt);
+            },
+            complete: function (d) {
+            },
+            error: function (ex) {
+                alert('Failed to import contact.');
+            }
+        });
+        return false;
+    }
+</script>

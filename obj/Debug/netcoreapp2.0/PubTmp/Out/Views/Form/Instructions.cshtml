@@ -1,0 +1,47 @@
+﻿
+@model ASJ.ViewModels.Form.InstrumentViewModel
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+
+<div class="container">
+    <div id="notices">
+        @if (@ViewBag.OrgType == 4)
+        {
+            @Html.Partial("_formInstructionsCOG")
+            @Html.Partial("_includeExcludeCOG")
+            @Html.Partial("_burdenStatementCOG")
+        }
+        else if (@ViewBag.OrgType == 6)
+        {
+            @Html.Partial("_formInstructions")
+            @Html.Partial("_instructionC13")
+        }
+        else
+        {
+            @Html.Partial("_formInstructions")
+
+            @if (@ViewBag.OrgType == 2)
+            {
+                @Html.Partial("_includeExcludeCJ5")
+            }
+            else
+            {
+                @Html.Partial("_includeExcludeCJ5A")
+            }
+            @Html.Partial("_burdenStatement")
+        }
+
+        <div class="text-center">
+            <a id="start_form" href="@Url.Action("Index", "Form", new { instrumentId =  @ViewBag.InstrumentId, organizationId = @ViewBag.OrganizationId, year = @ViewBag.Year })" class="btn btn-primary btn-sm">Begin</a>
+        </div>
+    </div>
+</div>

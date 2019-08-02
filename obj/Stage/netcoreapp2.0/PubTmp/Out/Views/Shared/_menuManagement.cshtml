@@ -1,0 +1,38 @@
+﻿<li>
+    <a href="@Url.Action("Index", "Management")">HOME</a>
+</li>
+
+@Html.Partial("_referenceForms")
+
+<li class="dropdown">
+    <a class="dropdown-toggle" href="#">
+        ACTIONS
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+            <h4><i class="fa fa-cogs"></i> GENERAL</h4>
+        </li>
+        <li><a href="@Url.Action("Dashboard", "Respondent")">Dashboard</a></li>
+        <li><a href="@Url.Action("Reports", "Respondent")">Reports</a></li>
+        <li><a href="@Url.Action("Impersonation", "Respondent")">Impersonation</a></li>
+        <li><a href="@Url.Action("Impersonation", "Respondent")">Document Center</a></li>
+        <li><a href="@Url.Action("Agencies", "Management")">Agency Profiles</a></li>
+        <li><a href="@Url.Action("QuickContact", "Management")">Quick Contacts</a></li>
+        @*<li><a href="@Url.Action("EventsTracker", "Management")">Events Tracker</a></li>*@
+        @*<li><a href="@Url.Action("Dqfu", "Management")">DQFU Grid</a></li>*@
+        <li>
+            <h4><i class="fa fa-magic"></i> ADMIN</h4>
+        </li>
+        <li><a href="@Url.Action("CreateUser", "Security")">Create User</a></li>
+        <li><a href="@Url.Action("CreateRoleOrRoleGroup", "Security")">Create Role/RoleGroup</a></li>
+        <li><a href="@Url.Action("ManageRoles", "Security")">Manage Roles</a></li>
+        <li><a href="@Url.Action("EmailManager", "Security")">Email Manager</a></li>
+    </ul>
+</li><!--end actions-->
+<li>
+    <a href="@Url.Action("FAQ", "Home")">FAQs</a>
+</li>
+@Html.Partial("_MoreInformation")
+<li>
+    <a href="@Url.Action("Logout","Home")">LOGOUT</a>
+</li>

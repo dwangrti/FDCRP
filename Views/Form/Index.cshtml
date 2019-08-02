@@ -1,0 +1,2149 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model ASJ.ViewModels.Form.InstrumentViewModel
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+@*Instrument Title*@
+<div class="container">
+    @if (!User.IsInRole("poc"))
+    {
+        <div class="text-sm-right bold">Editing for - @Model.OrganizationId</div>
+    }
+        @*if (@Model.SelectedPage == 1)
+        {
+            <div id="dataSupplierNotices">
+
+                @Html.Partial("_DataSuppliedBy", Model.DatasupplierVM)
+
+                <div class="text-center"><button type="button" id="closeDSBBtn" class="btn btn-primary ">Close Form Completed By</button></div>
+            </div>
+        }*@
+</div>
+
+<div class="container hidden" id="questionForm">
+    @*if (@Model.SelectedPage == 1)
+    {
+        <div class="mb-20"><a href="#" id="showNotices" class="btn btn-primary btn-sm"><i class="fa fa-question-circle"></i> Instructions and Burden</a> <a href="#" id="showDataSupplier" class="btn btn-primary btn-sm"><i class="fa fa-info-circle"></i> Form Completed By</a></div>
+    }*@
+    <div class="row">
+        <div class="col-sm-12">
+            @*<h2>@Model.Instrument.FormNumber</h2>*@
+
+            <form asp-controller="Form" method="post" id="Instrument">
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(model => model.Instrument.FormNumber)
+                @Html.HiddenFor(model => model.Instrument.InstrumentId)
+                @Html.HiddenFor(model => model.OrganizationId)
+                @Html.HiddenFor(model => model.Year)
+                @Html.HiddenFor(model => model.SelectedPage)
+                @Html.HiddenFor(model => model.Organization)
+                @Html.HiddenFor(model => model.OrgType)
+                @Html.HiddenFor(model => model.formStatus)
+                @Html.HiddenFor(model => model.RTIDataEntry)
+                @if (Model.RTIDataEntry)
+                {
+                    <div id="dataentry" class="box-static box-transparent box-border-top box-bordered padding-0">
+                        <div class="box-title margin-bottom-0">
+                            <h4 class="padding-10">RTI Data Entry</h4>
+                        </div>
+                        <div class="row padding-10">
+                            <div class="col-sm-2">
+                                <label asp-for="@Model.SelectedMode"></label>
+                                <select asp-for="@Model.SelectedMode" asp-items="@(new SelectList(Model.Modes, "ModeText", "ModeText", " "))" class="input-sm de_submissionmode">
+                                    <option>Select</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <label asp-for="@Model.DateReceived"></label>
+                                @Html.TextBoxFor(model => model.DateReceived, "{0:MM-dd-yyyy}", new { @class = "input-sm de_datereceived" })
+                            </div>
+                            <div class="col-sm-3">
+                                <label asp-for="@Model.SelectedSummaryStatusCodeId"></label>
+                                <select asp-for="@Model.SelectedSummaryStatusCodeId" asp-items="@(new SelectList(Model.SummaryStatuses, "SummaryStatusCodeId", "SummaryStatusCodeDescription" +
+                                  ""," "))" class="input-sm width-250 de_summarystatus"></select>
+                            </div>
+
+                            <div class="col-sm-3" style="padding-top:25px;">
+                                <input class="input-sm btn-primary" id="SendConfirmationEmail" type="button" value="Send Confirmation Email to POC" />
+                            </div>
+                            <div class="col-sm-1" style="padding-top:25px;">
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="GoToPage" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Go To Question
+                                    </button>
+
+                                    <div class="dropdown-menu " aria-labelledby="GoToPage">
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 1 })">Question 1</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 2 })">Question 2</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 3 })">Question 3</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 4 })">Question 4</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 5 })">Question 5</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 6 })">Question 6</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 7 })">Question 7</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 8 })">Question 8</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 9 })">Question 9</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 10 })">Question 10</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 11 })">Question 11</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 12 })">Question 12</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 13 })">Question 13</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 14 })">Question 14</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 15 })">Question 15</a><br />
+                                        <a class="dropdown-item" href="@Url.Action("Index", "Form", new { instrumentId = @Model.Instrument.InstrumentId, organizationId = @Model.OrganizationId, year = @Model.Year, page = 16 })">Question 16</a><br />
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                @*@Html.Partial("/Views/DataSuppliers/DataSuppliedBy.cshtml", Model.DatasupplierVM)*@
+
+                @*for the current page number, get the question and question type and created the form fields*@
+
+                @{var currPage = Model.SelectedPage;}
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    @Html.HiddenFor(model => model.Questions[i].Question.QuestionId)
+                    @Html.HiddenFor(model => model.Questions[i].Question.QuestionType.QuestionTypeId)
+                    @Html.HiddenFor(model => model.Questions[i].Question.QuestionType.QuestionTypeDescription)
+                    @Html.HiddenFor(model => model.Questions[i].Question.Variable)
+                    @Html.HiddenFor(model => model.Questions[i].EstimateQuestion.Variable)
+                    @if (Model.Questions[i].EstimateQuestion != null)
+                    {
+                        @Html.HiddenFor(model => model.Questions[i].EstimateQuestion.QuestionId)
+
+                    }
+
+                    if (Model.Questions[i].Page == currPage)
+                    {
+
+
+                        <div class="include-exclude row">
+                            @*//show includes excludes if they exist*@
+                            @if (@Model.Questions[i].IncludeExcludes.Where(x => x.BeforeAfter == "Before").Count() > 0)
+                            {
+                                if (Model.Questions[i].IncludeExcludes.Where(r => r.IncludeExclude == "Include" && r.BeforeAfter == "Before").Count() > 0)
+                                {
+                                    @*//Includes*@
+                                    <div class="@Model.Questions[i].Question.Indentation">
+                                        <h4 class="fs-14 unbold">INCLUDE&mdash;</h4>
+                                        <ul class="list-unstyled list-icons">
+                                            @foreach (ASJ.Models.Form.QuestionIncludeExclude ie in Model.Questions[i].IncludeExcludes.Where(p => p.IncludeExclude == "Include" && p.BeforeAfter == "Before").OrderBy(x => x.OrderNum).ToList())
+                                            {
+                                                <li> <div class="@Model.Questions[i].Question.Indentation"></div><span>&#10003;</span> @Html.Raw(@ie.DisplayText)</li>
+
+                                            }
+                                        </ul>
+                                    </div>
+
+                                }
+                                @*//Excludes*@
+                                if (Model.Questions[i].IncludeExcludes.Where(r => r.IncludeExclude == "Exclude" && r.BeforeAfter == "Before").Count() > 0)
+                                {
+                                    <div class="@Model.Questions[i].Question.Indentation">
+                                        <h4 class="fs-14 unbold">EXCLUDE&mdash;</h4>
+                                        <ul class="list-unstyled list-icons">
+                                            @foreach (ASJ.Models.Form.QuestionIncludeExclude ie in Model.Questions[i].IncludeExcludes.Where(p => p.IncludeExclude == "Exclude" && p.BeforeAfter == "Before").OrderBy(x => x.OrderNum).ToList())
+                                            {
+                                                <li> <div class="@Model.Questions[i].Question.Indentation"></div><span>&#10005;</span> @Html.Raw(@ie.DisplayText) </li>
+
+                                            }
+                                        </ul>
+                                    </div>
+
+                                }
+                            }
+                        </div>
+
+                        //build the questions: only for the parent questions, child questions will be nested inside the parent questions
+                        <div class="right row vertical-align" id="QuestionRow">
+
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "NumericTextInput" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="col-xs-7 col-sm-8 col-md-9">
+                                    <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].Question.QuestionText)</h4>
+                                </div>
+                                <div class="col-xs-2 nopadding-right text-right">
+                                    @if (@Model.Questions[i].TotalQuestionClass.Contains("totalbox"))
+                                    {
+                                        <input class="input-sm numericInput form-control @Model.Questions[i].HasFollowupQuestionsClass @Model.Questions[i].TotalQuestionClass" _readonly="readonly" id="@Model.Questions[i].Question.Variable" min=0 type="number" asp-for="@Model.Questions[i].SingleResponse" />
+
+
+                                    }
+                                    else
+                                    {
+                                        <input class="input-sm numericInput form-control @Model.Questions[i].HasFollowupQuestionsClass @Model.Questions[i].TotalQuestionClass" id="@Model.Questions[i].Question.Variable" min=0 type="number" asp-for="@Model.Questions[i].SingleResponse" />
+
+
+                                    }
+
+                                </div>
+                            }
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "TextOnly" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="col-xs-12">
+                                    <div class="@Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div>
+                                    <div class="fs-16">@Html.Raw(Model.Questions[i].Question.QuestionText)</div>
+                                </div>
+
+                            }
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "BoldTextOnly" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="col-xs-12">
+                                    <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(Model.Questions[i].Question.QuestionText)</h4>
+                                </div>
+                            }
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "OptionsCheckbox" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].Question.QuestionText)</h4>
+
+                                @for (int j = 0; j < Model.Questions[i].ResponseOptions.Count; j++)
+                                {
+                                    var id = string.Format("{0}_{1}", @Model.Questions[i].Question.Variable, @Model.Questions[i].ResponseOptions[j].ResponseOptionValue);
+                                    <div class="col-xs-12">
+                                        @Html.RadioButtonFor(model => model.Questions[i].SingleResponse, @Model.Questions[i].ResponseOptions[j].ResponseOptionValue, new { id, onclick = "displayQ();" })
+                                        @Html.LabelFor(model => model.Questions[i].SingleResponse, @Model.Questions[i].ResponseOptions[j].ResponseOptionText, new { @for = id })
+                                    </div>
+
+                                    //check to see if there are child questions required when the option is selected or checked
+                                    @if (Model.Questions[i].ChildQuestions != null && Model.Questions[i].ChildQuestions.Count > 0)
+                                    {
+                                        //if the child questions has the parent response id/value set to the this selected value, then display the child question
+                                        for (int k = 0; k < Model.Questions[i].ChildQuestions.Count; k++)
+                                        {
+                                            @if (Model.Questions[i].ChildQuestions[k].ParentResponseId == Model.Questions[i].ResponseOptions[j].ResponseOptionValue)
+                                            {
+                                                //display the child question based on its type, wow, wish I could reuse the code, need to redo this part later
+                                                //question text
+                                                <div id="conditionalQ" class="vertical-align">
+                                                    <div class="col-xs-7 col-sm-8 col-md-9">
+                                                        <div class="@Model.Questions[i].ChildQuestions[k].Indentation">@Model.Questions[i].ChildQuestions[k].DisplayNumber</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].ChildQuestions[k].QuestionText)</h4>
+                                                    </div>
+                                                    @for (int ii = 0; ii < Model.Questions.Count; ii++)
+                                                    {
+                                                        if (Model.Questions[ii].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                        {
+                                                            @if (Model.Questions[i].ChildQuestions[k].QuestionType.QuestionTypeDescription == "NumericTextInput")
+                                                            {
+                                                                <div class="col-xs-2 nopadding-right text-right">
+                                                                    @{if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                        {
+                                                                            <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" _readonly="readonly" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" min=0 asp-for="@Model.Questions[ii].SingleResponse" />
+
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" min=0 asp-for="@Model.Questions[ii].SingleResponse" />
+
+
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            }
+
+                                                            @if (Model.Questions[ii].EstimateQuestion != null)
+                                                            {
+
+                                                                <div class="col-xs-3 col-sm-2 col-md-1 nopadding-left">
+                                                                    @if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                    {
+                                                                        <label class="checkbox" style="display:none;" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                            <i></i>&nbsp;
+                                                                        </label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                            <i></i>&nbsp;
+                                                                        </label>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                </div>
+                                                <div style="display:none;" id="alert_@Model.Questions[i].ChildQuestions[k].Variable"><div class="alert alert-danger validationError">Response required. Please complete or provide an estimate for this question.</div></div>
+                                            }
+
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "YesNoOptions" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="col-xs-6 col-sm-8 col-md-10">
+                                    <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].Question.QuestionText)</h4>
+                                </div>
+                                @for (int j = 0; j < Model.Questions[i].ResponseOptions.Count; j++)
+                                {
+                                    var id = string.Format("{0}_{1}", @Model.Questions[i].Question.Variable, @Model.Questions[i].ResponseOptions[j].ResponseOptionValue);
+                                    <div class="col-xs-3 col-sm-2 col-md-1 yes-no">
+                                        @Html.RadioButtonFor(model => model.Questions[i].SingleResponse, @Model.Questions[i].ResponseOptions[j].ResponseOptionValue, new { id, onclick = "displayQ();" })
+                                        @Html.LabelFor(model => model.Questions[i].SingleResponse, @Model.Questions[i].ResponseOptions[j].ResponseOptionText, new { @for = id })
+                                    </div>
+
+                                    //check to see if there are child questions required when the option is selected or checked
+                                    @if (Model.Questions[i].ChildQuestions != null && Model.Questions[i].ChildQuestions.Count > 0)
+                                    {
+                                        //if the child questions has the parent response id/value set to the this selected value, then display the child question
+                                        for (int k = 0; k < Model.Questions[i].ChildQuestions.Count; k++)
+                                        {
+                                            @if (Model.Questions[i].ChildQuestions[k].ParentResponseId == Model.Questions[i].ResponseOptions[j].ResponseOptionValue)
+                                            {
+                                                //display the child question based on its type, wow, wish I could reuse the code, need to redo this part later
+                                                //question text
+                                                <div id="conditionalQ" class="vertical-align">
+                                                    <div class="col-xs-7 col-sm-8 col-md-9">
+                                                        <div class="@Model.Questions[i].ChildQuestions[k].Indentation">@Model.Questions[i].ChildQuestions[k].DisplayNumber</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].ChildQuestions[k].QuestionText)</h4>
+                                                    </div>
+                                                    @for (int ii = 0; ii < Model.Questions.Count; ii++)
+                                                    {
+                                                        if (Model.Questions[ii].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                        {
+                                                            @if (Model.Questions[i].ChildQuestions[k].QuestionType.QuestionTypeDescription == "NumericTextInput")
+                                                            {
+                                                                <div class="col-xs-2 nopadding-right text-right">
+                                                                    @{if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                        {
+                                                                            <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" _readonly="readonly" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" min=0 asp-for="@Model.Questions[ii].SingleResponse" />
+
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" min=0 asp-for="@Model.Questions[ii].SingleResponse" />
+
+
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                            }
+
+                                                            @if (Model.Questions[ii].EstimateQuestion != null)
+                                                            {
+
+                                                                <div class="col-xs-3 col-sm-2 col-md-1 nopadding-left">
+                                                                    @if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                    {
+                                                                        <label class="checkbox" style="display:none;" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                            <i></i>&nbsp;
+                                                                        </label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                            <i></i>&nbsp;
+                                                                        </label>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                </div>
+                                                <div style="display:none;" id="alert_@Model.Questions[i].ChildQuestions[k].Variable"><div class="alert alert-danger validationError">Response required. Please complete or provide an estimate for this question.</div></div>
+                                            }
+
+                                        }
+                                    }
+
+                                }
+                            }
+
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "ShortTextInput" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="specify-container @Model.Questions[i].Question.Indentation">
+                                    <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div>
+                                </div>
+                                <div class="cell-calc">
+                                    <div>
+                                        <div class="full-row">
+                                            <div class="table-cell">
+                                                <h4 class="fs-16">@Html.Raw(@Model.Questions[i].Question.QuestionText) <span class="unbold fs-18 down-arrow">&#8628;</span></h4>
+                                            </div>
+                                        </div>
+                                        <div class="full-row">
+                                            <div class="col-xs-7 col-sm-8 col-md-9 nopadding-left">
+                                                <input id="@Model.Questions[i].Question.Variable" asp-for="@Model.Questions[i].SingleResponse" class="form-control input-sm specify-question" />
+                                            </div>
+                                            @*//check to see if there are child questions*@
+                                            @if (Model.Questions[i].ChildQuestions != null && Model.Questions[i].ChildQuestions.Count > 0)
+                                            {
+                                                for (int k = 0; k < Model.Questions[i].ChildQuestions.Count; k++)
+                                                {
+                                                    //display the child question based on its type, wow, wish I could reuse the code, need to redo this part later
+                                                    //question text
+                                                    <div class="@Model.Questions[i].ChildQuestions[k].Indentation">@Model.Questions[i].ChildQuestions[k].DisplayNumber</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].ChildQuestions[k].QuestionText)</h4>
+                                                    @for (int ii = 0; ii < Model.Questions.Count; ii++)
+                                                    {
+                                                        if (Model.Questions[ii].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                        {
+                                                            @if (Model.Questions[i].ChildQuestions[k].QuestionType.QuestionTypeDescription == "NumericTextInput")
+                                                            {
+                                                                <div class="col-xs-2 nopadding-right text-right">
+                                                                    <input class="input-sm numericInput form-control  @Model.Questions[ii].TotalQuestionClass" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" min=0 asp-for="@Model.Questions[ii].SingleResponse" />
+                                                                </div>
+                                                            }
+
+                                                            @if (Model.Questions[ii].EstimateQuestion != null)
+                                                            {
+                                                                <div class="col-xs-3 col-sm-2 col-md-1 nopadding-left">
+                                                                    <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                        <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                        <i></i>&nbsp;
+                                                                    </label>
+                                                                </div>
+                                                            }
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+                            @*Table Layout with many child questions*@
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "TableLayout" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                //The questionText for the Tables Layout contains the column headers for the table, we assume there is a leading column for labels
+                                string[] cols = @Model.Questions[i].Question.QuestionText.Split(";");
+                                int totalCols = cols.Length;
+                                <div id="divTable">
+                                    <table class="table">
+                                        <!--Table head-->
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                @for (int ii = 0; ii < cols.Length; ii++)
+                                                {
+                                                    <th>@cols[ii]</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <!--Table head-->
+                                        <!--Table body-->
+                                        <tbody>
+                                            @*check to see if there are child questions*@
+                                            @if (Model.Questions[i].ChildQuestions != null && Model.Questions[i].ChildQuestions.Count > 0)
+                                            {
+                                                int totalRows = Model.Questions[i].ChildQuestions.Count / (totalCols);
+
+                                                for (int rowIndex = 1; rowIndex <= totalRows; rowIndex++)
+                                                {
+                                                    <tr>
+                                                        @for (int colIndex = 1; colIndex <= totalCols; colIndex++)
+                                                        {
+                                                            int cellPos = rowIndex * 10 + colIndex;
+                                                            @for (int k = 0; k < Model.Questions[i].ChildQuestions.Count; k++)
+                                                            {
+                                                                //the orderSegment value is the row and column position, for eaxmple, 11 means row=1 and col=1, 13 means row=1 and column=3
+                                                                if (Model.Questions[i].ChildQuestions[k].OrderSegment == cellPos)
+                                                                {
+                                                                    //the label for the row is assumed to be the questiontext of the first cell in each row
+                                                                    if (colIndex == 1)
+                                                                    {
+                                                                        <td scope="row"><div class="bold">@Html.Raw(@Model.Questions[i].ChildQuestions[k].IntroText)</div></td>
+                                                                    }
+                                                                    <td>
+                                                                        @for (int ii = 0; ii < Model.Questions.Count; ii++)
+                                                                        {
+                                                                            if (Model.Questions[ii].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                                            {
+                                                                                @if (Model.Questions[i].ChildQuestions[k].QuestionType.QuestionTypeDescription == "NumericTextInput")
+                                                                                {
+
+
+                                                                                    if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                                    {
+                                                                                        <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" _readonly="readonly" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" asp-for="@Model.Questions[ii].SingleResponse" />//asp-for is wrong
+
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <input class="input-sm numericInput form-control @Model.Questions[ii].TotalQuestionClass" id="@Model.Questions[i].ChildQuestions[k].Variable" type="number" asp-for="@Model.Questions[ii].SingleResponse" />//asp-for is wrong
+
+
+                                                                                    }
+
+                                                                                }
+
+                                                                                @if (Model.Questions[ii].EstimateQuestion != null)
+                                                                                {
+                                                                                    if (@Model.Questions[ii].TotalQuestionClass.Contains("totalbox"))
+                                                                                    {
+                                                                                        <label class="checkbox" style="display:none;" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                                            <i></i>&nbsp;
+                                                                                        </label>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                                            <input class="input-large" id="@Model.Questions[ii].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[ii].EstimateResponse" />
+                                                                                            <i></i>&nbsp;
+                                                                                        </label>
+                                                                                    }
+                                                                                }
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                    </td>
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                        <!--Table body-->
+                                    </table>
+                                </div>
+                            }
+
+                            @if (Model.Questions[i].EstimateQuestion != null && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                <div class="col-xs-3 col-sm-2 col-md-1 nopadding-left">
+                                    @if (@Model.Questions[i].TotalQuestionClass.Contains("totalbox"))
+                                    {
+                                        <label class="checkbox" style="display:none;" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                            <input class="input-large" id="@Model.Questions[i].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[i].EstimateResponse" />
+                                            <i></i>&nbsp;
+                                        </label>
+
+                                    }
+                                    else
+                                    {
+                                        <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                            <input class="input-large" id="@Model.Questions[i].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[i].EstimateResponse" />
+                                            <i></i>&nbsp;
+                                        </label>
+                                    }
+                                </div>
+                            }
+
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "ExplanationTextInput" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                //this is a hidden question, its only shown during validtaion when an explanation is required
+                                <div id="explanation">
+                                    <label for="@Model.Questions[i].Question.Variable">@Html.Raw(@Model.Questions[i].Question.QuestionText)</label>
+                                    <textarea rows="2" cols="80" id="@Model.Questions[i].Question.Variable" asp-for="@Model.Questions[i].SingleResponse" class="form-control"></textarea>
+                                </div>
+                            }
+
+                            @if (Model.Questions[i].Question.QuestionType.QuestionTypeDescription == "DayOfMonthInput" && Model.Questions[i].Question.ParentQuestionId == 0)
+                            {
+                                //this is a June 30, 2018, Month and Year are fixed, juust need a short text input for the Day part
+                                <div class="col-xs-9">
+                                    <div class="bold @Model.Questions[i].Question.Indentation">@Html.Raw(@Model.Questions[i].Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(@Model.Questions[i].Question.QuestionText)</h4>
+                                </div>
+                                <div class="col-xs-3 nopadding-right text-right">
+                                    <div><h4 class="fs-16">June</h4> </div>
+                                    <input class="input-sm numericInput day-input form-control @Model.Questions[i].HasFollowupQuestionsClass @Model.Questions[i].TotalQuestionClass" id="@Model.Questions[i].Question.Variable" min="0" max="30" type="number" asp-for="@Model.Questions[i].SingleResponse" />
+                                    <div><h4 class="fs-16">, 2018</h4></div>
+                                </div>
+                            }
+                        </div>
+                        <div style="display:none;" id="alert_@Model.Questions[i].Question.Variable"><div class="alert alert-danger validationError">Response required. Please complete or provide an estimate for this question.</div></div>
+
+
+                        <div class="include-exclude row">
+                            @*//show includes excludes if they exist*@
+                            @if (@Model.Questions[i].IncludeExcludes.Where(x => x.BeforeAfter == "After").Count() > 0)
+                            {
+                                if (Model.Questions[i].IncludeExcludes.Where(r => r.IncludeExclude == "Include" && r.BeforeAfter == "After").Count() > 0)
+                                {
+                                    @*//Includes*@
+                                    <div class="@Model.Questions[i].Question.Indentation">
+                                        <h4 class="fs-14 unbold">INCLUDE&mdash;</h4>
+
+                                        <ul class="list-unstyled list-icons">
+                                            @foreach (ASJ.Models.Form.QuestionIncludeExclude ie in Model.Questions[i].IncludeExcludes.Where(p => p.IncludeExclude == "Include" && p.BeforeAfter == "After").OrderBy(x => x.OrderNum).ToList())
+                                            {
+
+                                                <li><div class="@Model.Questions[i].Question.Indentation"></div><span>&#10003;</span> @Html.Raw(@ie.DisplayText) </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+
+                                }
+                                @*//Excludes*@
+                                if (Model.Questions[i].IncludeExcludes.Where(r => r.IncludeExclude == "Exclude" && r.BeforeAfter == "After").Count() > 0)
+                                {
+                                    <div class="@Model.Questions[i].Question.Indentation">
+                                        <h4 class="fs-14 unbold">EXCLUDE&mdash;</h4>
+                                        <ul class="list-unstyled list-icons">
+                                            @foreach (ASJ.Models.Form.QuestionIncludeExclude ie in Model.Questions[i].IncludeExcludes.Where(p => p.IncludeExclude == "Exclude" && p.BeforeAfter == "After").OrderBy(x => x.OrderNum).ToList())
+                                            {
+
+                                                <li> <div class="@Model.Questions[i].Question.Indentation"></div><span>&#10005;</span> @Html.Raw(@ie.DisplayText) </li>
+
+                                            }
+                                        </ul>
+                                    </div>
+
+                                }
+                            }
+                        </div>
+
+                        //build subsequent child questions related to same page skips
+                        @if (Model.Questions[i].ChildQuestions != null)
+                        {
+                            Model.Questions[i].ChildQuestions.OrderBy(x => x.OrderSegment);
+                            for (int k = 0; k < Model.Questions[i].ChildQuestions.Count; k++)
+                            {
+                                ASJ.ViewModels.Form.QuestionViewModel qvm = Model.Questions.Where(x => x.Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId && Model.Questions[i].ChildQuestions[k].ParentResponseValue != null).FirstOrDefault();
+                                if (qvm != null)
+                                {
+                                    <div class="followupquestion row">
+                                        @*hidden fields for the pattern and the entered value*@
+                                        <input type="hidden" id="hdnParentResponsePattern" asp-for="@qvm.Question.ParentResponseValue" />
+                                        <input type="hidden" id="hdnParentResponse" asp-for="@Model.Questions[i].SingleResponse" />
+                                        @{
+                                            var parentqvm = Model.Questions.Where(x => x.Question.QuestionId == Model.Questions[i].ChildQuestions[k].ParentQuestionId).SingleOrDefault();
+                                            var parentVariable = "";
+                                            if (parentqvm != null)
+                                            {
+                                                parentVariable = parentqvm.Question.Variable;
+
+                                            }
+                                        }
+                                        <input type="hidden" id="hdnParentId" asp-for="@parentVariable" />
+
+
+                                        @if (qvm.Question.QuestionType.QuestionTypeDescription == "NumericTextInput")
+                                        {
+                                            <div class="right row vertical-align" id="QuestionRow">
+                                                <div class="col-xs-7 col-sm-8 col-md-9">
+                                                    <div class="bold @qvm.Question.Indentation">@Html.Raw(@qvm.Question.DisplayNumber)</div> <h4 class="fs-16">@Html.Raw(qvm.Question.QuestionText)</h4>
+                                                </div>
+                                                @*using where is not working - the answer values dont propogate to the model so using for loop*@
+                                                @for (int l = 0; l < Model.Questions.Count; l++)
+                                                {
+                                                    if (Model.Questions[l].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                    {
+                                                        <div class="col-xs-2 nopadding-right text-right">
+                                                            @if (@Model.Questions[l].TotalQuestionClass.Contains("totalbox"))
+                                                            {
+                                                                <input class="input-sm numericInput form-control @Model.Questions[l].TotalQuestionClass" _readonly="readonly" id="@Model.Questions[l].Question.Variable" type="number" min=0 asp-for="@Model.Questions[l].SingleResponse" />
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <input class="input-sm numericInput form-control @Model.Questions[l].TotalQuestionClass" id="@Model.Questions[l].Question.Variable" type="number" min=0 asp-for="@Model.Questions[l].SingleResponse" />
+
+                                                            }
+                                                        </div>
+                                                        @if (qvm.EstimateQuestion != null)
+                                                        {
+                                                            @for (int e = 0; e < Model.Questions.Count; e++)
+                                                            {
+                                                                if (Model.Questions[e].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+                                                                {
+                                                                    <div class="col-xs-3 col-sm-2 col-md-1 nopadding-left">
+                                                                        @if (@Model.Questions[l].TotalQuestionClass.Contains("totalbox"))
+                                                                        {
+                                                                            <label class="checkbox" style="display:none;" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                                <input class="input-large" id="@Model.Questions[e].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[e].EstimateResponse" />
+                                                                                <i></i>&nbsp;
+                                                                            </label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <label class="checkbox" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated.">
+                                                                                <input class="input-large" id="@Model.Questions[e].EstimateQuestion.Variable" type="checkbox" asp-for="@Model.Questions[e].EstimateResponse" />
+                                                                                <i></i>&nbsp;
+                                                                            </label>
+                                                                        }
+
+                                                                    </div>
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        }
+                                        @if (qvm.Question.QuestionType.QuestionTypeDescription == "TextOnly")
+                                        {
+                                            <div class="col-xs-12">
+                                                <div class="fs-16 @qvm.Question.Indentation">@Html.Raw(@qvm.Question.DisplayNumber)</div><h4 class="fs-16">@Html.Raw(qvm.Question.QuestionText)</h4>
+                                            </div>
+                                        }
+                                        @if (qvm.Question.QuestionType.QuestionTypeDescription == "BoldTextOnly")
+                                        {
+                                            <div class="col-xs-12">
+                                                <div class="bold @qvm.Question.Indentation">@Html.Raw(@qvm.Question.DisplayNumber)</div><h4 class="fs-16 bold">@Html.Raw(qvm.Question.QuestionText)</h4>
+                                            </div>
+                                        }
+                                        @if (qvm.Question.QuestionType.QuestionTypeDescription == "OptionsCheckbox")
+                                        {
+                                            @for (int l = 0; l < Model.Questions.Count; l++)
+                                            {
+                                                if (Model.Questions[l].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+
+                                                {
+                                                    <div class="bold @Model.Questions[l].Question.Indentation">@Html.Raw(@Model.Questions[l].Question.DisplayNumber)</div> <h4 class="fs-16">@Html.Raw(Model.Questions[l].Question.QuestionText)</h4>
+                                                    for (int j = 0; j < Model.Questions[l].ResponseOptions.Count; j++)
+                                                    {
+                                                        var id = string.Format("{0}_{1}", Model.Questions[l].Question.Variable, Model.Questions[l].ResponseOptions[j].ResponseOptionValue);
+                                                        <div class="col-xs-12 @Model.Questions[l].Question.Indentation-radio">
+                                                            @Html.RadioButtonFor(model => Model.Questions[l].SingleResponse, Model.Questions[l].ResponseOptions[j].ResponseOptionValue, new { id, onclick = "displayQ();" })
+                                                            @Html.LabelFor(model => Model.Questions[l].SingleResponse, Model.Questions[l].ResponseOptions[j].ResponseOptionText, new { @for = id })
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        @if (qvm.Question.QuestionType.QuestionTypeDescription == "YesNoOptions")
+                                        {
+                                            @for (int l = 0; l < Model.Questions.Count; l++)
+                                            {
+                                                if (Model.Questions[l].Question.QuestionId == Model.Questions[i].ChildQuestions[k].QuestionId)
+
+                                                {
+                                                    <div class="bold @Model.Questions[l].Question.Indentation">@Html.Raw(@Model.Questions[l].Question.DisplayNumber)</div> <h4 class="fs-16">@Html.Raw(Model.Questions[l].Question.QuestionText)</h4>
+                                                    for (int j = 0; j < Model.Questions[l].ResponseOptions.Count; j++)
+                                                    {
+                                                        var id = string.Format("{0}_{1}", Model.Questions[l].Question.Variable, Model.Questions[l].ResponseOptions[j].ResponseOptionValue);
+                                                        <div class="col-xs-12">
+                                                            @Html.RadioButtonFor(model => Model.Questions[l].SingleResponse, Model.Questions[l].ResponseOptions[j].ResponseOptionValue, new { id, onclick = "displayQ();" })
+                                                            @Html.LabelFor(model => Model.Questions[l].SingleResponse, Model.Questions[l].ResponseOptions[j].ResponseOptionText, new { @for = id })
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                    <div style="display:none;" id="alert_@qvm.Question.Variable"><div class="alert alert-danger validationError">Response required. Please complete or provide an estimate for this question.</div></div>
+
+                                }
+
+                            }
+
+                        }
+                    }
+                }<br />
+
+                <div id="actionBtns" class="row">
+                    @if (currPage == 1)
+                    {
+                        //don't know why the routing is incorrect the first time
+                        <div class="text-right col-xs-6 col-sm-offset-6">
+                            <input class="btn btn-primary btn-md" type="submit" name="next" formaction="/Form/Next" value="Next" onclick="ValidateData(@currPage, event);" />
+                        </div>
+                    }
+                    else
+                    {
+
+                        <div class="col-xs-6 float-right text-right">
+                            <input class="btn btn-primary btn-md" type="submit" formaction="/Form/Next" value="Next" onclick="ValidateData(@currPage, event);" />
+                        </div>
+                        //back button does not work for cogtest somehow
+                        <div class="col-xs-6 float-left">
+                            <input class="btn btn-primary btn-md" type="submit" formaction="/Form/Back" value="Back" />
+                        </div>
+                    }
+                </div>
+
+            </form>
+
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+@section Scripts {
+    <script type="text/JavaScript">
+
+    //debugger;
+    $(document).ready(function () {
+        ////called when key is pressed in textbox
+        //$(".numericInput").keypress(function (e) {
+        //    alert(e.which);
+        //    //if the letter is not digit then display error and don't type anything
+        //    if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+        //        //display error message
+        //        if (!$(this).parent().parent().find('.whole-numbers').length) {
+        //            $(this).parent().parent().after('<div class="whole-numbers text-right">Only whole numbers equal to or greater than 0 allowed.</div>');
+        //        }//end check to see if it's already there
+        //        return false;
+        //    } else {
+        //        $(this).parent().parent().next('.whole-numbers').remove();
+        //    }//end if numbers are wrong
+        //});
+
+        $(".numericInput").change(function (e) {
+            var wholenumberPattern = /^\+?(0|[1-9]\d*)$/;
+            if (!wholenumberPattern.test($(this).val()) && $(this).val().trim() != "") {
+                //display error message
+                $(this).parent().parent().next('.whole-numbers').remove();
+                    $(this).parent().parent().after('<div class="whole-numbers text-right">Only whole numbers equal to or greater than 0 allowed.</div>');
+                e.preventDefault();
+                return false;
+            }
+            else {
+                $(this).parent().parent().next('.whole-numbers').remove();
+            }
+          });
+        //make the explnanation field hidden
+        $("#explanation").hide();
+
+            //hide the child question initially until the parent value condition is met
+            $("#conditionalQ").hide();
+                                        if ($("#week_1").prop("checked"))
+            $("#conditionalQ").show();
+
+        //------------------------------------
+        //       Show explanation box for RTI user
+        if ($("#RTIDataEntry").val() == "True") {
+            $("#explanation").show();
+
+        }
+        else {
+            $("#explanation").hide();
+
+        }
+                                    });
+
+                                    function displayQ() {
+                                        //hard code the html elements for now, add new question for Cognative test here but don't change the conditionalQ
+                                        if ($("#week_1").prop("checked"))
+                $("#conditionalQ").show(); //don't change the conditionalQ ID
+                                        if ($("#week_2").prop("checked"))
+                                            $("#conditionalQ").hide(); //don't change the conditionalQ ID
+                                        $("#alert_week").hide();
+                                    }
+
+                                    function ValidateData(pageNo, evt) {
+
+                                        var ValidationPassed = true;
+
+
+                                        //------------------------------------------
+                                        // For Cog Test no validation needed so we are done
+                                        //------------------------------------------
+                                        var formNumber = $("#OrgType").val();
+                                        if (ValidationPassed && formNumber == 4)
+                                            return;
+
+
+        //If explanation section is shown and the textarea is not empty, skip all validation and go to next
+                                        if ($("#explanation").is(":visible") && $("#RTIDataEntry").val() != "True") {
+            var reason = $("#explanation").find("textarea").val();
+            if ($.trim(reason) != "") {
+                return;
+            }
+                                        }
+                                        //Only do validation for POC login
+                                        var poclogin = @Html.Raw(Json.Serialize((User.IsInRole("poc"))));
+
+                                        //--------------------------------------
+                                        //Required fields validations, no longer needed as we restrict the input to digits only
+                                        //--------------------------------------
+                                        if (poclogin) {
+                                            if (ValidationPassed) {
+                                                ValidationPassed = Validate_RequiredFields(pageNo, evt);
+                                            }
+
+
+                                            //------------------------------------------
+                                            // variable validations, one function for each page, this is very specific to this ASJ project
+                                            //------------------------------------------
+                                            if (ValidationPassed && pageNo == 1) {
+                                                ValidationPassed = ValidatePage1();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 2) {
+                                                ValidationPassed = ValidatePage2();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 3) {
+                                                ValidationPassed = ValidatePage3();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 4) {
+                                                ValidationPassed = ValidatePage4();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 5) {
+                                                ValidationPassed = ValidatePage5();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 6) {
+                                                ValidationPassed = ValidatePage6();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 7) {
+                                                ValidationPassed = ValidatePage7();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 8) {
+                                                ValidationPassed = ValidatePage8();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 9) {
+                                                ValidationPassed = ValidatePage9();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 10) {
+                                                ValidationPassed = ValidatePage10();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 11) {
+                                                ValidationPassed = ValidatePage11();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 12) {
+                                                ValidationPassed = ValidatePage12();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 13) {
+                                                ValidationPassed = ValidatePage13();
+                                                //if (ValidationPassed)
+                                                //    ValidationPassed = ValidatePage13B();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 14) {
+                                                ValidationPassed = ValidatePage14();
+                                            }
+
+                                            if (ValidationPassed && pageNo == 15) {
+                                                ValidationPassed = ValidatePage15();
+                                            }
+
+                                            //once all the validations are done and passes then set this field to true, then submit.
+                                            if (!ValidationPassed) {
+                                                evt.preventDefault();
+                                            }
+                                        }
+                                    }
+
+
+                                    function Validate_RequiredFields(pageNo, evt) {
+                                        var result = true;
+            //get each textbox that has a class of numericInput
+                                        $(".numericInput").each(function () {
+                                            //get the value and check if its a number
+                                            var numValue = $(this).val();
+                                            var alertId = "alert_" + this.id;
+                                            if (numValue == "" && pageNo!=2)
+                                            {
+                                                //other specify number field is not required, need to be excluded somehow
+                                                //$("#otheroffspec"), $("#otherracespec")
+                                                //if (!$(this).is($("#otheroff")) && !$(this).is($("#otherrace")) && !$(this).is($("#otherfed")) && !$(this).is($("#otrnonconfs"))) {
+                                                    //alert(this.id);
+                                                    //alert(alertId);
+                                                    document.getElementById(alertId).style.display = "table-row";
+                                                    document.getElementById(alertId).innerHTML = '<div class="alert alert-danger validationError">Please complete this question. If the answer is 0, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box.</div>';
+                                                    $(this).css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                                    // document.getElementById(alertId).show();
+                                                    //document.getElementById(alertId).css("display", "block").html("Response required. Please complete or provide an estimate for this question.").show();
+                                                    //$(this).parent().next().css("display", "block").html("Response required. Please complete or provide an estimate for this question.").show();
+                                                    result = false;
+                                                    evt.preventDefault();
+                                                    //event.preventDefault();
+                                                //}
+                                            }
+                                            else {
+                                                if (document.getElementById(alertId) != undefined)
+                                                    document.getElementById(alertId).style.display = "none";
+                                                //  $(this).parent().next().css("display", "none");
+                                            }
+                                        });
+                                        return result;
+                                    }
+
+                                    function ValidatePage1() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var a = parseInt($("#confpop").val());
+                                        var b = parseInt($("#nconfpop").val());
+                                        var c = parseInt($("#totpop").val());
+
+                                        if (a == 0 )
+                                        {
+                                            $("#totpop").parent().parent().next().css("display", "block").html("You indicated that 0 persons were confined in this jail on June 29, 2018. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                                           // $("#alert_confpop").css("display", "block").html("You indicated that 0 persons were confined in this jail on June 29, 2018. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                                            $('#confpop').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                        }
+
+                                        //if (a == 0 && formNumber == 3) {
+                                        //    $("#totpop").parent().parent().next().css("display", "block").html("You indicated that 0 persons were under the supervision of this facility on June 29, 2018. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                                        //    result = false;
+                                        //}
+
+                                        if (a + b != c)
+                                        {
+                                            $("#totpop").parent().parent().next().css("display", "block").html("The sum of Questions 1a and 1b does not equal the number you provided for Question 1c. Please review and verify that your responses to Questions 1a, 1b, and 1c are accurate.").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+
+                                        //for now let's just pass for Congentive test
+                                        if (formNumber == 4)
+                                            result = true;
+
+                                        if (result == false)
+                                             $("#explanation").show();
+                                        return result;
+                                    }
+
+                                    function ValidatePage2() {
+                                        var result = true;
+                                        var formNumber = $("#OrgType").val();
+
+                                        //for now let's just pass for Congentive test
+                                        if (formNumber == 4) {
+                                            result = true;
+                                            return result;
+                                        }
+
+                                        if (!($("#week_1").prop("checked")) && !($("#week_2").prop("checked"))) {
+                                            //var alertId = "alert_week_1";
+                                            //document.getElementById(alertId).style.display = "block";
+                                            $("#alert_week").css("display", "table-row").html('<div class="alert alert-danger validationError">Please complete Q2.</div>');
+                                            result = false;
+                                            //event.preventDefault();
+                                        }
+
+                                        if (($("#week_1").prop("checked"))) {
+                                            var numValue = $("#weekn").val();
+                                            if (numValue == "") {
+                                                //if (formNumber == 2) {
+                                                $("#alert_weekn").css("display", "table-row").html('<div class="alert alert-danger validationError">Please complete Q2b. If your agency had a weekend program on the weekend prior to June 29, 2018, but no one participated on that weekend, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box.</div>');
+                                                $('#weekn').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                                // }
+                        //                        else if (formNumber == 3) {
+                        //$("#conditionalQ").parent().next().css("display", "block").html("You indicated that this facility had a weekend program on the weekend prior to June 29, 2018; however, you did not indicate the number of participants. Please review and verify that your responses to Question 2 are accurate.").addClass("alert alert-danger").show();
+                        //                        }
+                                                result = false;
+                                                // event.preventDefault();
+                                            }
+                                        }
+
+                                        if (result == false)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage3() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl+ "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year="+year+"&page=1";
+
+                                        var a = parseInt($("#noncitz").val());
+
+                //                        if (a == 0 && formNumber == 2) {
+                //$("#noncitz").parent().parent().next().css("display", "block").html("You indicated that 0 persons were under the supervision of your jail facilities on June 29, 2018. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                //                            result = false;
+                //                        }
+
+                //                        if (a == 0 && formNumber == 3) {
+                //$("#noncitz").parent().parent().next().css("display", "block").html("You indicated that 0 persons were under the supervision of this facility on June 29, 2018. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                //                            result = false;
+                //                        }
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (a > q1a) {
+                                            //var q1Link = "<a href="
+                                            $("#noncitz").parent().parent().next().css("display", "block").html("This number is greater than the total number of inmates confined on the same date(Q1a: " + q1a.toString() +"). Please verify your answers. If you need to correct Q1a, please use  <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            $('#noncitz').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                    //                        if (formNumber == 2) {
+                    //$("#noncitz").parent().parent().next().css("display", "block").html("The number you provided for Question 3 is greater than the number you provided for Question 1a (the number of persons confined in your jail facilities on the same day). Please review and verify that your responses to Questions 1a and 3 are accurate. If you need to correct Question 1a, please use <a href="+page1URL+">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                    //                        else if (formNumber == 3) {
+                    //$("#noncitz").parent().parent().next().css("display", "block").html("The number you provided for Question 3 is greater than the number you provided for Question 1a (the number of persons confined in this facility on the same day). Please review and verify that your responses to Questions 1a and 3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                                            result = false;
+                                        }
+
+                                        if (result == false)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage4() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var a = parseInt($("#adultm").val());
+                                        var b = parseInt($("#adultf").val());
+                                        var c = parseInt($("#juvm").val());
+                                        var d = parseInt($("#juvf").val());
+                                        var sum = a + b + c + d;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (sum > q1a) {
+                                                $("#totgender").parent().parent().next().css("display", "block").html("The sum of Q4a through Q4d is greater than the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+                                        else if (sum != q1a) {
+                                                $("#totgender").parent().parent().next().css("display", "block").html("The sum of Q4a through Q4d is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() +"). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+
+
+                                        if (result == false)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+
+                                    function ValidatePage5() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page4URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=4";
+
+
+                                        var formNumber = $("#OrgType").val();
+                                        var a = parseInt($("#adltjuv").val());
+
+                                        var q4c = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4C")');
+                                        var q4d = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4D")');
+                                        if (a > (q4c+q4d)) {
+                                            $("#adltjuv").parent().parent().next().css("display", "block").html("This number is greater than the total number of inmates age 17 or younger confined on the same date (Q4c: "+q4c.toString()+" and Q4d: "+q4d.toString()+"). Please verify your answers. If you need to correct Q4, please use <a href=" + page4URL +">this link.</a>").addClass("alert alert-danger").show();
+                                            $('#adltjuv').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                        }
+
+                                        if (result == false)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage6() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var a = parseInt($("#conv").val());
+                                        var b = parseInt($("#unconv").val());
+                                        var c = parseInt($("#totconvstatus").val());
+                                        var sum = a + b;
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (sum > q1a) {
+                                            $("#totconvstatus").parent().parent().next().css("display", "block").html("The sum of Q6a through Q6b is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+
+                                            result = false;
+                                        }
+                                        else if (sum != q1a) {
+                                            $("#totconvstatus").parent().parent().next().css("display", "block").html("The sum of Q6a through Q6b is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+
+
+                                        if (result == false)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage7() {
+                                        var result = true;
+                                        var showExplanation = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var a = parseInt($("#felony").val());
+                                        var b = parseInt($("#misd").val());
+                                        var c = parseInt($("#otheroff").val());
+                                        var d = parseInt($("#totoff").val());
+                                        var otherspec = $("#otheroffspec").val();
+
+                                        var sum = (isNaN(a) ? 0 : a) + (isNaN(b) ? 0 : b) + (isNaN(c) ? 0 : c) ;
+
+                                        if (c >= 1 && $.trim(otherspec) == "")
+             {
+                                            $("#alert_otheroffspec").css("display", "block").html("Please complete the “Other—Specify” text box.").addClass("alert alert-danger").show();
+                                            $('#otheroffspec').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+                                        }
+
+                                        if ((isNaN(c)) && $.trim(otherspec).length>0) {
+                                            $("#alert_otheroffspec").css("display", "block").html("Please complete Q7c. If the answer is 0, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box. ").addClass("alert alert-danger").show();
+                                            $('#otheroff').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+                                        }
+
+                                        if (c >= 1 && $.trim(otherspec).length > 0) {
+                                            $("#alert_otheroffspec").css("display", "none");
+                                        }
+
+                                        if (c >= 1 && $.trim(otherspec).length > 0 && !isNaN($.trim(otherspec))) {
+                                            $("#alert_otheroffspec").css("display", "block").html("You entered a number in both Q7c answer box and the “Other—Specify” text box. Please provide text in the text box on the left to explain the numeric answer on the right.").addClass("alert alert-danger").show();
+                                            $('#otheroffspec').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+                                        }
+
+                                        if ((c == 0) && $.trim(otherspec).length == 0) {
+                                            $("#alert_otheroffspec").css("display", "none");
+                                        }
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (sum > q1a) {
+                                            $("#totoff").parent().parent().next().css("display", "block").html("The sum of Q7a through Q7c is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+                                        else if (sum != q1a) {
+                                            $("#totoff").parent().parent().next().css("display", "block").html("The sum of Q7a through Q7c is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+
+                                        if (result == false && showExplanation == true)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage8() {
+                                        var result = true;
+                                        var showExplanation = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var a = parseInt($("#white").val());
+                                        var b = parseInt($("#black").val());
+                                        var c = parseInt($("#hisp").val());
+                                        var d = parseInt($("#AIAN").val());
+                                        var e = parseInt($("#asian").val());
+                                        var f = parseInt($("#nhopi").val());
+                                        var g = parseInt($("#tworace").val());
+                                        var h = parseInt($("#otherrace").val());
+                                        var i = parseInt($("#racedk").val());
+                                        var j = parseInt($("#racetotal").val());
+                                        var otherspec = $("#otherracespec").val();
+
+                                        var sum = a + b + c + d + e + f + g + (isNaN(h) ? 0 : h)+i;
+
+                                        if (h >= 1 && $.trim(otherspec) == "")
+             {
+                                            $("#alert_otherracespec").css("display", "block").html("Please complete the “Specify” text box.").addClass("alert alert-danger").show();
+                                            $('#otherracespec').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+                                        }
+
+                                        if ((isNaN(h)) && $.trim(otherspec).length>0) {
+                                            $("#alert_otherracespec").css("display", "block").html("Please complete Q8h. If the answer is 0, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box.").addClass("alert alert-danger").show();
+                                            $('#otherrace').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+
+                                        }
+
+                                        if (h >= 1 && $.trim(otherspec).length > 0) {
+                                            $("#alert_otherracespec").css("display", "none");
+                                        }
+                                        if ((h == 0) && $.trim(otherspec).length == 0) {
+                                            $("#alert_otherracespec").css("display", "none");
+                                        }
+
+                                        if (h >= 1 && $.trim(otherspec).length > 0 && !isNaN($.trim(otherspec))) {
+                                            $("#alert_otherracespec").css("display", "block").html("You entered a number in both Q8h answer box and the “Specify” text box. Please provide text in the text box on the left to explain the numeric answer on the right.").addClass("alert alert-danger").show();
+                                            $('#otherracespec').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+
+                                        }
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (sum > q1a) {
+                                            $("#racetotal").parent().parent().next().css("display", "block").html("The sum of Q8a through Q8i is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+
+                    //                        //var q1Link = "<a href="
+                    //                        if (formNumber == 2) {
+                    //$("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 8a through 8i is greater than the number you provided for Question 1a (the number of persons confined in your jail facilities on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                    //                        else if (formNumber == 3) {
+                    //$("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 8a through 8i is greater than the number you provided for Question 1a (the number of persons confined in this facility on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                                            result = false;
+                                        }
+                                        else if (sum != q1a) {
+                                            $("#racetotal").parent().parent().next().css("display", "block").html("The sum of Q8a through Q8i is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            //var q1Link = "<a href="
+                    //                        if (formNumber == 2) {
+                    //$("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 8a through 8i does not equal the number you provided for Question 1a (the number of persons confined in your jail facilities on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                    //                        else if (formNumber == 3) {
+                    //$("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 8a through 8i does not equal the number you provided for Question 1a (the number of persons confined in this facility on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                                            result = false;
+                                        }
+
+                                        if (result == false && showExplanation == true)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+
+                                    function ValidatePage9() {
+                                        var result = true;
+                                        var showExplanation = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var a1 = parseInt($("#marshals").val());
+                                        var a2 = parseInt($("#bop").val());
+                                        var a3 = parseInt($("#ice").val());
+                                        var a4 = parseInt($("#bia").val());
+                                        var a5 = parseInt($("#otherfed").val());
+                                        var b1 = parseInt($("#instatepris").val());
+                                        var b2 = parseInt($("#outstatepris").val());
+                                        var c = parseInt($("#tribal").val());
+                                        var d1 = parseInt($("#instatejail").val());
+                                        var d2 = parseInt($("#outstatejail").val());
+                                        var e = parseInt($("#otherholdtot").val());
+                                        var otherspec = $("#otherfedspec").val();
+
+                                        var sum = a1 + a2 + a3 + a4 + (isNaN(a5) ? 0 : a5)+b1+b2+c+d1+d2;
+
+                                        if (a5 >= 1 && $.trim(otherspec) == "")
+             {
+                                            $("#alert_otherfedspec").css("display", "block").html("Please complete the “Other—Specify” text box.").addClass("alert alert-danger").show();
+                                            $('#otherfedspec').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+
+                                        }
+
+                                        if ((isNaN(a5)) && $.trim(otherspec).length>0) {
+                                            $("#alert_otherfedspec").css("display", "block").html("Please complete Q9a5. If the answer is 0, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box.").addClass("alert alert-danger").show();
+                                            $('#otherfed').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                                            result = false;
+                                            showExplanation = false;
+
+                                        }
+
+                                        if (a5 >= 1 && $.trim(otherspec).length > 0) {
+                                            $("#alert_otherfedspec").css("display", "none");
+                                            $('#otherfedspec').css({ 'border-color': '#000', 'background-color': '#fff' });
+                                        }
+                                        if ((a5 == 0) && $.trim(otherspec).length == 0) {
+                                            $("#alert_otherfedspec").css("display", "none");
+                                        }
+
+                                        if (a5 >= 1 && $.trim(otherspec).length > 0 && !isNaN($.trim(otherspec))) {
+                                            $("#alert_otherfedspec").css("display", "block").html("You entered a number in both Q9a5 answer box and the “Other-Specify” text box. Please provide text in the text box on the left to explain the numeric answer on the right.").addClass("alert alert-danger").show();
+                                            result = false;
+                                            showExplanation = false;
+
+                                        }
+
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+                                        if (sum > q1a) {
+                                            $("#otherholdtot").parent().parent().next().css("display", "block").html("The sum of Q9a 1through Q9d2 is not less than or equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                                            //if (formNumber == 2) {
+                                            //    $("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 9a1 through 9d2 is greater than the number you provided for Question 1a (the number of persons confined in your jail facilities on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href="+page1URL+">this link.</a>").addClass("alert alert-danger").show();
+                                            //}
+                                            //else if (formNumber == 3) {
+                                            //    $("#racetotal").parent().parent().next().css("display", "block").html("The sum of Questions 8a through 8i is greater than the number you provided for Question 1a (the number of persons confined in this facility on the same day). Please review and verify that your responses to Questions 1a and 8a through 8i are accurate. If you need to correct Question 1a, please use <a href="+page1URL+">this link.</a>").addClass("alert alert-danger").show();
+                                            //}
+                                            result = false;
+                                        }
+                                       // else if (sum != q1a) {
+                                          //  $("#otherholdtot").parent().parent().next().css("display", "block").html("The sum of Q9a 1through Q9d2 is not equal to the total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                    //                        if (formNumber == 2) {
+                    //$("#otherholdtot").parent().parent().next().css("display", "block").html("The sum of Questions 9a through 9d2 does not equal the number you provided for Question 1a (the number of persons confined in your jail facilities on the same day). Please review and verify that your responses to Questions 9a through 9d2 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                    //                        else if (formNumber == 3) {
+                    //$("#otherholdtot").parent().parent().next().css("display", "block").html("The sum of Questions 9a through 9d2 does not equal the number you provided for Question 1a (the number of persons confined in this facility on the same day). Please review and verify that your responses to Questions 9a through 9d2 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                    //                        }
+                                          //  result = false;
+                                      //  }
+
+                                        if (result == false && showExplanation == true)
+                $("#explanation").show();
+                                        return result;
+                                    }
+
+                                    function ValidatePage10() {
+                                        var result = true;
+
+                                        var formNumber = $("#OrgType").val();
+                                        var instrumentId = $("#Instrument_InstrumentId").val();
+                                        var organizationId = $("#OrganizationId").val();
+                                        var year = $("#Year").val();
+
+                                        var baseurl = window.location.origin;  //+ window.location.pathname
+                                        var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+                                        var a = parseInt($("#peakdate").val());
+                                        var b = parseInt($("#peakpop").val());
+
+                                        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+
+                                        if (a<1 || a>30) {
+                                            $("#peakdate").parent().parent().next().css("display", "block").html("The number you provided for Question 10a is not a valid date in June.  Please provide a valid date between 1 and 30.").addClass("alert alert-danger").show();
+                                            result = false;
+                                        }
+                                        if (a != 29 && b < q1a && !($("#peakpop_estimate").prop("checked"))) {
+                                            $("#peakpop").parent().parent().next().css("display", "block").html("This number is smaller than the total number of inmates confined on June 29, 2018 (Q1a: "+q1a.toString()+"). Please verify your answers. If you need to correct Q1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (a == 29 && b != q1a ) {
+                $("#peakpop").parent().parent().next().css("display", "block").html("You indicated that the greatest number of inmates were held on June 29, 2018, however, the number of inmates reported in question 10b does not equal to the total number of inmates confined on June 29, 2018(Q1a: " + q1a.toString() +"). Please verify your answers. If you need to correct Question 1a, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                //if (formNumber == 2) {
+                //    $("#peakpop").parent().parent().next().css("display", "block").html("You indicated that the greatest number of inmates were held on June 29, 2018, however, the number of inmates reported in question 10b does not equal the number of inmates reported in question 1a (the number of persons confined in your jail facilities on June 29, 2018). If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#peakpop").parent().parent().next().css("display", "block").html("You indicated that the greatest number of inmates were held on June 29, 2018, however, the number of inmates reported in question 10b does not equal the number of inmates reported in question 1a (the number of persons confined in this facility on on June 29, 2018). If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function ValidatePage11() {
+            var result = true;
+
+            var formNumber = $("#OrgType").val();
+            var instrumentId = $("#Instrument_InstrumentId").val();
+            var organizationId = $("#OrganizationId").val();
+            var year = $("#Year").val();
+
+            var baseurl = window.location.origin;  //+ window.location.pathname
+            var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+            var a = parseInt($("#adpmale").val());
+            var b = parseInt($("#adpfemale").val());
+            var c = parseInt($("#adp").val());
+
+            var sum = a + b;
+
+        var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+        if (a == 0 && b == 0) {
+            if (formNumber == 2) {
+                $("#adpfemale").parent().parent().next().css("display", "block").html("You indicated that the average daily population of your jail facilities was 0. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                $('#adpmale, #adpfemale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+            }
+            else if (formNumber == 3) {
+                $("#adpfemale").parent().parent().next().css("display", "block").html("You indicated that the average daily population of this facility was 0. Please confirm that this is correct.").addClass("alert alert-danger").show();
+                $('#adpmale, #adpfemale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+            }
+            result = false;
+        }
+
+            if (sum > c) {
+                $("#adp").parent().parent().next().css("display", "block").html("The sum of Questions 11a and 11b is greater than the number you provided for Question 11c. Please review and verify that your responses to Questions 11a, 11b, and 11c are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (sum < c) {
+                $("#adp").parent().parent().next().css("display", "block").html("The sum of Questions 11a and 11b does not equal the number you provided for Question 11c. Please review and verify that your responses to Questions 11a, 11b, and 11c are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (c>10 && q1a==0 ) {
+                $("#adp").parent().parent().next().css("display", "block").html("The average daily population is significantly different from the total number of inmates confined on June 29, 2018. Please verify your answers. If you need to correct Q1a, please please use <a href=" + page1URL +">this link.</a> If you did not house any inmates on June 29, 2018, please indicate that in the text box below.").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function ValidatePage12() {
+            var result = true;
+
+            var formNumber = $("#OrgType").val();
+            var a = parseInt($("#rated").val());
+
+
+            if (a == 0) {
+                $("#alert_rated").css("display", "block").html("Please verify that this jail had a rated capacity of 0 on June 29, 2018.").addClass("alert alert-danger").show();
+                //if (formNumber == 2) {
+                //    $("#rated").parent().parent().next().css("display", "block").html("You indicated that your jail facilities do not have the capacity to hold inmates. Please edit your response or confirm below that this is correct.").addClass("alert alert-danger").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#rated").parent().parent().next().css("display", "block").html("You indicated that this facility does not have the capacity to hold inmates. Please edit your response or confirm below that this is correct.").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function ValidatePage13() {
+            var result = true;
+
+            var formNumber = $("#OrgType").val();
+            var instrumentId = $("#Instrument_InstrumentId").val();
+            var organizationId = $("#OrganizationId").val();
+            var year = $("#Year").val();
+
+            var baseurl = window.location.origin;  //+ window.location.pathname
+            var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+            var page4URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=4";
+            var page11URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=11";
+
+            var a1 = parseInt($("#admismale").val());
+            var a2 = parseInt($("#admisfemale").val());
+            var a3 = parseInt($("#admis").val());
+            var b1 = parseInt($("#releasemale").val());
+            var b2 = parseInt($("#releasefemale").val());
+            var b3 = parseInt($("#release").val());
+
+            var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+            var q4a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4A")');
+            var q4b = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4B")');
+            var q4c = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4C")');
+            var q4d = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4D")');
+            var q11a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q11A")');
+            var q11b = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q11B")');
+
+
+            if (a1 <=q4a+q4c) {
+                $("#alert_admismale").css("display", "block").html("This number is less than or equal to the number of males confined on June 29, 2018 (Q4a: "+q4a.toString()+" and Q4c: "+q4c.toString()+"). Most jails admit and discharge more persons during a 12-month period than they typically hold on one day. Please verify your answers. If you need to correct Q4, please use <a href=" + page4URL +">this link.</a> ").addClass("alert alert-danger").show();
+                $('#admismale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                result = false;
+            }
+
+            if (a2 <= q4b + q4d) {
+                $("#alert_admisfemale").css("display", "block").html("This number is less than or equal to the number of females confined on June 29, 2018 (Q4b: " + q4b.toString() + " and Q4d: " + q4d.toString() + "). Most jails admit and discharge more persons during a 12-month period than they typically hold on one day. Please verify your answers. If you need to correct Q4, please use <a href=" + page4URL + ">this link.</a> ").addClass("alert alert-danger").show();
+                $('#admisfemale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                // $("#admisfemale").parent().parent().next().css("display", "block").html("The number you provided for Question 13a2 is less than or equal to the number of confined females you indicated that you had on June 29, 2018 in Question 4. In most jails, the number of females admitted over the course of a year is larger than the number of females held on a given day. Please review and verify that your responses to Question 4 and Question 13a2 are accurate. If you need to correct Question 4, please use <a href=" + page4URL +">this link.</a> ").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (a1 < q11a) {
+                $("#alert_admismale").css("display", "block").html("This number is less than or equal to male average daily population (Q11a: " + q11a.toString() + "). In most jails, the number of inmates held on a typical day is smaller than the number of inmates admitted over the course of a year. Please verify your answers. If you need to correct Q11, please use <a href=" + page11URL + ">this link.</a> ").addClass("alert alert-danger").show();
+                $('#admismale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                //  $("#admismale").parent().parent().next().css("display", "block").html("The number you provided for Question 13a1 is less than or equal to the number you provided for Question 11a (the male average daily population). In most jails, the number of inmates held on a typical day is smaller than the number of inmates admitted over the course of a year. Please review and verify that your responses to Question 11 and Question 13 are accurate. If you need to correct Question 11, please use <a href=" + page11URL +">this link.</a> ").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (a2 <= q11b) {
+                $("#alert_admisfemale").css("display", "block").html("This number is less than or equal to female average daily population (Q11b: " + q11b.toString() + "). In most jails, the number of inmates held on a typical day is smaller than the number of inmates admitted over the course of a year. Please verify your answers. If you need to correct Q11, please use <a href=" + page11URL + ">this link.</a> ").addClass("alert alert-danger").show();
+                $('#admisfemale').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                //  $("#admisfemale").parent().parent().next().css("display", "block").html("The number you provided for Question 13a2 is less than or equal to the number you provided for Question 11b (the female average daily population). In most jails, the number of inmates held on a typical day is smaller than the number of inmates admitted over the course of a year. Please review and verify that your responses to Question 11 and Question 13 are accurate. If you need to correct Question 11, please use <a href=" + page11URL +">this link.</a>").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (a3 <= q1a) {
+                $("#alert_admis").css("display", "block").html("The number you provided for Question 13a3 is less than or equal to the number you provided for Question 1a (Q1a: " + q1a.toString() + "). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please verify your answers. If you need to correct Q1a, please use  <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                $('#admis').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+
+                //if (formNumber == 2) {
+                //    $("#admis").parent().parent().next().css("display", "block").html("The number you provided for Question 13a3 is less than or equal to the number you provided for Question 1a (the number of persons confined in your jail facilities on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13a3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#admis").parent().parent().next().css("display", "block").html("The number you provided for Question 13a3 is less than or equal to the number you provided for Question 1a (the number of persons confined in this facility on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13a3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+            if (a1 == 0 && a2 == 0) {
+                $("#alert_admismale").css("display", "block").html("Please verify that no males or females were admitted from July 1, 2017, to June 30, 2018.").show();
+                result = false;
+            }
+
+            if (a1 + a2 > a3) {
+                $("#alert_admis").css("display", "block").html("The sum of Questions 13a1 and 13a2 is greater than the number you provided for Question 13a3. Please review and verify that your responses to Questions 13a1, 13a2, and 13a3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (a1+a2 <a3) {
+                $("#alert_admis").css("display", "block").html("The sum of Questions 13a1 and 13a2 does not equal the number you provided for Question 13a3. Please review and verify that your responses to Questions 13a1, 13a2, and 13a3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+            if (b3 <= q1a) {
+                $("#release").parent().parent().next().css("display", "block").html("This number is less than or equal to total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). In most jails, the number of inmates discharged over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Q1a, please use  <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                $('#release').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                //if (formNumber == 2) {
+                //    $("#release").parent().parent().next().css("display", "block").html("The number you provided for Question 13b3 is less than or equal to the number you provided for Question 1a (the number of persons confined in your jail facilities on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").addClass("alert alert-danger").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#release").parent().parent().next().css("display", "block").html("The number you provided for Question 13b3 is less than or equal to the number you provided for Question 1a (the number of persons confined in this facility on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+            if (b1 + b2 > b3) {
+                $("#release").parent().parent().next().css("display", "block").html("The sum of Questions 13b1 and 13b2 is greater than the number you provided for Question 13b3. Please review and verify that your responses to Questions 13b1, 13b2, and 13b3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (b1 + b2 < b3) {
+                $("#release").parent().parent().next().css("display", "block").html("The sum of Questions 13b1 and 13b2 does not equal the number you provided for Question 13b3. Please review and verify that your responses to Questions 13b1, 13b2, and 13b3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function ValidatePage13B() {
+            var result = true;
+
+            var formNumber = $("#OrgType").val();
+            var instrumentId = $("#Instrument_InstrumentId").val();
+            var organizationId = $("#OrganizationId").val();
+            var year = $("#Year").val();
+
+            var baseurl = window.location.origin;  //+ window.location.pathname
+            var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+            var b1 = parseInt($("#releasemale").val());
+            var b2 = parseInt($("#releasefemale").val());
+            var b3 = parseInt($("#release").val());
+
+            var q1a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1A")');
+            var q4a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4A")');
+            var q4b = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4B")');
+            var q4c = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4C")');
+            var q4d = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q4D")');
+            var q11a = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q11A")');
+            var q11b = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q11B")');
+
+
+            if (b3 <= q1a) {
+                $("#release").parent().parent().next().css("display", "block").html("This number is less than or equal to total number of inmates confined on the same date (Q1a: " + q1a.toString() + "). In most jails, the number of inmates discharged over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Q1a, please use  <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                $('#release').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                //if (formNumber == 2) {
+                //    $("#release").parent().parent().next().css("display", "block").html("The number you provided for Question 13b3 is less than or equal to the number you provided for Question 1a (the number of persons confined in your jail facilities on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").addClass("alert alert-danger").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#release").parent().parent().next().css("display", "block").html("The number you provided for Question 13b3 is less than or equal to the number you provided for Question 1a (the number of persons confined in this facility on June 29, 2018). In most jails, the number of inmates admitted over the course of a year is larger than the number of inmates held on a given day. Please review and verify that your responses to Questions 1a and 13b3 are accurate. If you need to correct Question 1a, please use <a href=" + page1URL +">this link.</a> ").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+            if (b1 + b2 > b3) {
+                $("#release").parent().parent().next().css("display", "block").html("The sum of Questions 13b1 and 13b2 is greater than the number you provided for Question 13b3. Please review and verify that your responses to Questions 13b1, 13b2, and 13b3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (b1+b2 <b3) {
+                $("#release").parent().parent().next().css("display", "block").html("The sum of Questions 13b1 and 13b2 does not equal the number you provided for Question 13b3. Please review and verify that your responses to Questions 13b1, 13b2, and 13b3 are accurate.").addClass("alert alert-danger").show();
+                result = false;
+            }
+
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+         function ValidatePage14() {
+            var result = true;
+             var showExplanation = true;
+
+             var formNumber = $("#OrgType").val();
+             var instrumentId = $("#Instrument_InstrumentId").val();
+             var organizationId = $("#OrganizationId").val();
+             var year = $("#Year").val();
+
+             var baseurl = window.location.origin;  //+ window.location.pathname
+             var page1URL = baseurl + "/Form?instrumentId=" + instrumentId + "&organizationId=" + organizationId + "&year=" + year + "&page=1";
+
+             var a = parseInt($("#emonitor").val());
+             var b = parseInt($("#homedetn").val());
+             var c = parseInt($("#commsrv").val());
+             var d = parseInt($("#dayreport").val());
+             var e = parseInt($("#pretrial").val());
+             var f = parseInt($("#altwork").val());
+             var g = parseInt($("#treatment").val());
+             var h = parseInt($("#otrnonconf").val());
+             var i = parseInt($("#nonconfd").val());
+             var otherspec = $("#otrnonconfs").val();
+
+             var sum = a + b + c + d + e + f + g + (isNaN(h) ? 0 : h);
+
+             if (h >= 1 && $.trim(otherspec) == "")
+             {
+                 $("#alert_otrnonconf").css("display", "block").html("Please complete the “Other—Specify” text box.").addClass("alert alert-danger").show();
+                 $('#otrnonconfs').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                 result = false;
+                 showExplanation = false;
+
+             }
+
+             if ((isNaN(h)) && $.trim(otherspec).length > 0) {
+                 $("#alert_otrnonconf").css("display", "block").html("Please complete Q14h. If the answer is 0, please enter “0”. If you do not know the exact number, please provide an estimate and check the small box next to the answer box.").addClass("alert alert-danger").show();
+                 $('#otrnonconf').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                 result = false;
+                 showExplanation = false;
+
+             }
+
+              if (h >= 1 && $.trim(otherspec).length > 0) {
+                  $("#alert_otrnonconf").css("display", "none");
+                  $('#otrnonconf, #otrnonconfs').css({ 'border-color': '#000', 'background-color': '#fff' });
+              }
+              if ((h == 0) && $.trim(otherspec).length == 0) {
+                  $("#alert_otrnonconf").css("display", "none");
+                  $('#otrnonconf, #otrnonconfs').css({ 'border-color': '#000', 'background-color': '#fff' });
+              }
+
+             if (h >= 1 && $.trim(otherspec).length > 0 && !isNaN($.trim(otherspec))) {
+                 $("#alert_otrnonconf").css("display", "block").html("You entered a number in both Q14h answer box and the “Specify” text box. Please provide text in the text box on the left to explain the numeric answer on the right.").addClass("alert alert-danger").show();
+                 $('#otrnonconfs').css({ 'border-color': '#a94442', 'background-color': '#f2dede' });
+                 result = false;
+                 showExplanation = false;
+
+             }
+
+             var q1b = parseInt('@HttpContextAccessor.HttpContext.Session.GetString("Q1B")');
+            if (sum != q1b) {
+                $("#nonconfd").parent().parent().next().css("display", "block").html("The sum of Questions 14a through 14h does not equal the number you provided for Question 1b (Q1b: "+q1b.toString()+"). Please review and verify that your responses to Questions 1b and 14a through 14h are accurate. If you need to correct Question 1b, please use <a href=" + page1URL + ">this link.</a>").addClass("alert alert-danger").show();
+                //if (formNumber == 2) {
+                //    $("#nonconfd").parent().parent().next().css("display", "block").html("The sum of Questions 14a through 14h does not equal the number you provided for Question 1b (the number of persons under the supervision of your jail facilities who were not confined on the same day). Please review and verify that your responses to Questions 1b and 14a through 14h are accurate. If you need to correct Question 1b, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                //}
+                //else if (formNumber == 3) {
+                //    $("#nonconfd").parent().parent().next().css("display", "block").html("The sum of Questions 14a through 14h does not equal the number you provided for Question 1b (the number of persons under the supervision of this facility who were not confined on the same day). Please review and verify that your responses to Questions 1b and 14a through 14h are accurate. If you need to correct Question 1b, please use <a href=" + page1URL +">this link.</a>").addClass("alert alert-danger").show();
+                //}
+                result = false;
+            }
+
+             if (result == false && showExplanation == true)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function ValidatePage15() {
+            var result = true;
+
+            var formNumber = $("#OrgType").val();
+            var a = parseInt($("#corrstaff").val());
+            var a1 = parseInt($("#corrstaffmale").val());
+            var a2 = parseInt($("#corrstafffemale").val());
+            var b = parseInt($("#otherstaff").val());
+            var b1 = parseInt($("#otherstaffmale").val());
+            var b2 = parseInt($("#otherstafffemale").val());
+            var c = parseInt($("#totalstaff").val());
+
+            if (a1 + a2 != a) {
+                $("#corrstafffemale").parent().parent().next().css("display", "block").html("The sum of questions 15a1 and 15a2 does not equal the number you provided for question 15a. Please review your responses.").addClass("alert alert-danger").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else {
+                $("#corrstafffemale").parent().parent().next().hide();
+            }
+
+            if (b1 + b2 != b) {
+                $("#otherstafffemale").parent().parent().next().css("display", "block").html("The sum of questions 15b1 and 15b2 does not equal the number you provided for question 15b. Please review your responses.").addClass("alert alert-danger").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else {
+                $("#otherstafffemale").parent().parent().next().hide();
+            }
+
+            if ((isNaN(a) ? 0 : a) + (isNaN(b) ? 0 : b) != c) {
+                $("#totalstaff").parent().parent().next().css("display", "block").html("The sum of Questions 15a and 15b does not equal the number you provided for Question 15c. Please review your responses.").addClass("alert alert-danger").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (a > c && (isNaN(b) || b == 0)) {
+                $("#totalstaff").parent().parent().next().css("display", "block").html("The number you provided for Question 15a is greater than the number you provided for Question 15c. Please review your responses.").addClass("alert alert-danger").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else if (b > c && (isNaN(a) || a == 0)) {
+                $("#totalstaff").parent().parent().next().css("display", "block").html("The number you provided for Question 15b is greater than the number you provided for Question 15c. Please review your responses.").addClass("alert alert-danger").addClass("alert alert-danger").show();
+                result = false;
+            }
+            else {
+                $("#totalstaff").parent().parent().next().hide();
+            }
+
+            if (result == false)
+                $("#explanation").show();
+            return result;
+        }
+
+
+        function Validate_ConfPopJune(event) {
+            var result = true;
+            if ($("#confpop").val() != "" && $("#confpop").val() != undefined) {
+                //var myData = "{confpopjune:'" + $("#confpop").val() + "',instrumentID:1, organizationID:10950037, year:2017}";
+                //var myData = JSON.stringify({
+                //    'confpopjune': '1',
+                //    'instrumentID': 1,
+                //    'organizationID': 10950037,
+                //    'year': 2017
+                //});
+                var ajaxRequest = $.ajax({
+
+
+                    @*url: "@Url.Action("Validate_confpopjune", "Form")",*@
+                    //something wrong here, only first parameter passed to the server
+                    url: "@Url.Action("Validate_confpopjune", "Form", new{ confpopjune ='1', instrumentID=1, organizationID=10950037, year=2017})",
+                    //url: "/Form/Validate_confpopjune",
+                    type: "POST",
+                    //data: myData,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (msg) {
+                        if (msg.success) {
+                            $("#confpop").parent().parent().next().css("display", "none");
+                            result = true;
+                        }
+                        else {
+                            $("#confpop").parent().parent().next().val(msg.message);
+                            $("#confpop").parent().parent().next().css("display", "block");
+                            result = false;
+
+                        }
+                    },
+                    error: function (msg) {
+                        $("#confpop").parent().parent().next().val("Error Occured");
+                        $("#confpop").parent().parent().next().css("display", "block");
+
+                        result = false;
+                    }
+                });
+
+            }
+            else {
+                result = true;
+            }
+            return result;
+        }
+
+    </script>
+    <script>
+        //Perform Script on parent textbox text change event
+        $(".HasFollowUp").change(function () {
+            //skips show and hide
+            $('.followupquestion').each(function () {
+                //find the 2 hidden fields
+                var pattern = $(this).find("#hdnParentResponsePattern").val();
+                var parValueId = $(this).find("#hdnParentId").val();
+                var parValue = $('#' + parValueId).val()
+                if (parValue.match(pattern)) {
+                    $(this).css("display", "block");
+                }
+                else {
+                    $(this).css("display", "none");
+                }
+
+            });
+        });
+
+        //RUNNING TOTALS
+        $('.addendbox').change(function () {
+
+            //find the unique class
+            if ($(this).attr("class").match("tot_\\w*")) {
+
+                var clas = $(this).attr("class").match("tot_\\w+")[0];
+                var total = 0;
+                $(".addendbox." + clas).each(function () {
+                    if ($(this).val() != "")
+                        total = total + parseInt($(this).val());
+                });
+
+                //after calculating the total set the value in the total box
+                $(".totalbox." + clas).val(total);
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            hideInstructions();
+            hideDataSuppliedBy();
+
+            /*do some indenting
+            $('#newadmisscreenpos, #newadmisscreenposunique, #newadmistreatunique').parent().parent().removeClass('margin-left-15').addClass('margin-left-30');
+            $('#corrstaff, #otherstaff, #totalstaff').parent().parent().removeClass('margin-left-3').addClass('margin-left-10');
+            $('#corrstaffmale, #corrstafffemale').parent().parent().removeClass('margin-left-3').addClass('margin-left-15');*/
+
+            //handle the empty ones taking up space
+            $('.right.row, .include-exclude.row').each(function () {
+                if (!$(this).html().trim()) {
+                    //console.log('no stuff in this one');
+                    $(this).css('margin-bottom', '0');
+                    $(this).css('margin-top', '0');
+                    $(this).css('padding-top', '0');
+                }
+            });//end each QuestionRow
+
+            //skips show and hide
+            $('.followupquestion').each(function () {
+                //find the 2 hidden fields
+                var pattern = $(this).find("#hdnParentResponsePattern").val();
+                var parValue = $(this).find("#hdnParentResponse").val();
+                if (parValue.match(pattern))
+                    $(this).css("display", "block");
+                else
+                    $(this).css("display", "none");
+
+            });
+            $('#showNotices').click(function () {
+                showInstructions();
+            });
+
+
+            $('#closeBtn').click(function () {
+                //$("#notices").addClass("hidden");
+                //$("#questionForm").removeClass("hidden");
+                hideInstructions();
+
+
+            });
+            $('#closeDSBBtn').click(function () {
+                //$("#notices").addClass("hidden");
+                //$("#questionForm").removeClass("hidden");
+                hideDataSuppliedBy();
+
+            });
+            $('#showDataSupplier').click(function () {
+                //$("#notices").addClass("hidden");
+                //$("#questionForm").removeClass("hidden");
+                showDataSuppliedBy();
+
+            });
+
+            if ($("#formStatus").val() == "True") {
+                hideInstructions()
+                // $("#notices").addClass("hidden");
+                // $("#questionForm").removeClass("hidden");
+            }
+
+            function showInstructions() {
+                $("#notices").removeClass("hidden");
+                $("#questionForm").addClass("hidden");
+            }
+
+            function hideInstructions() {
+                $("#notices").addClass("hidden");
+                $("#questionForm").removeClass("hidden");
+                window.scrollTo(0, 0);
+            }
+
+            function showDataSuppliedBy() {
+                $("#dataSupplierNotices").removeClass("hidden");
+                $("#showDataSupplier").addClass("hidden");
+            }
+
+            function hideDataSuppliedBy() {
+                $("#dataSupplierNotices").addClass("hidden");
+                $("#showDataSupplier").removeClass("hidden");
+                window.scrollTo(0, 0);
+            }
+            /*
+             Don't need to do this on page load, as it would overwrite totals that were entered manually
+            //RUNNING TOTALS
+            $('.totalbox').each(function () {
+
+                //find the unique class
+                if ($(this).attr("class").match("tot_\\w+")) {
+                    var clas = $(this).attr("class").match("tot_\\w+")[0];
+                    var total = 0;
+                    $(".addendbox." + clas).each(function () {
+                        if ($(this).val() != "")
+                            total = total + parseInt($(this).val());
+                    });
+
+                    //after calculating the total set the value in the total box
+                    $(".totalbox." + clas).val(total);
+                }
+            });
+             */
+
+            // alert($('#Name').val());
+            if ($("#formStatus").val() == "True") {
+                hideDataSuppliedBy();
+
+
+            }
+            else {
+
+                showDataSuppliedBy();
+            }
+            //initialize tooltips
+            if ($('#confpop_estimate').length) {
+                $('#confpop_estimate').parent('label').after('<i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="When exact numeric answers are not available, provide estimates and mark the checkbox beside each number that is estimated."></i>');
+            }
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $('.de_datereceived').datepicker({
+                format: 'mm-dd-yyyy'
+            });
+            $('.de_datereceived').change(function () {
+                var orgID = $('#OrganizationId').val();
+                var year = $('#Year').val();
+                var daterec = $(this).val();
+               
+                $.ajax({
+                    type: "POST",
+                    url: 'Form/SaveDEDateReceived?organizationId=' + orgID + "&year=" + year + "&dateReceived=" + daterec,
+                     contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                    },
+                    error: function (ob, errStr) {
+                       
+                        alert("An error occured, while saving the Date Received field.");
+                    }
+                
+                });
+              
+            });
+
+            $('.de_submissionmode').change(function () {
+                var orgID = $('#OrganizationId').val();
+                var year = $('#Year').val();
+                var mode = $(this).val();
+               
+
+                $.ajax({
+                    type: "POST",
+                    url: 'Form/SaveDESubmissionMode?organizationId=' + orgID + "&year=" + year + "&submissionMode=" + mode,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                    },
+                    error: function (ob, errStr) {
+
+                        alert("An error occured, while saving the Submission Mode field.");
+                    }
+
+                });
+
+            });
+
+            $('.de_summarystatus').change(function () {
+                var orgID = $('#OrganizationId').val();
+                var year = $('#Year').val();
+                var stat = $(this).val();
+
+
+                $.ajax({
+                    type: "POST",
+                    url: 'Form/SaveDESummaryStatus?organizationId=' + orgID + "&year=" + year + "&summaryStatusId=" + stat,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                    },
+                    error: function (ob, errStr) {
+
+                        alert("An error occured, while saving the Summary Status field.");
+                    }
+
+                });
+
+            });
+            $('#SendConfirmationEmail').click(function () {
+                var orgID = $('#OrganizationId').val();
+                var year = $('#Year').val();
+              
+                $.ajax({
+                    type: "POST",
+                    url: 'Form/SendConfirmationEmail?organizationId=' + orgID + "&year=" + year,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: "json",
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function (ob, errStr) {
+
+                        alert("An error occured, while saving the Summary Status field.");
+                    }
+
+                });
+
+            });
+           // alert($('.de_datereceived').val());
+            if ($('.de_datereceived').val() == '01-01-0001') {
+                $('.de_datereceived').val('');
+              //  alert($('.de_datereceived').val());
+            }
+        });//end document ready
+    </script>
+}

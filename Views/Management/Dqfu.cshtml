@@ -1,0 +1,233 @@
+﻿@model List<ASJ.ViewModels.Management.MainGridViewModel>
+@{
+    ViewData["Title"] = "DQFU Grid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var assignUsers = ViewData["assignUsers"] as List<String>;
+}
+<style>
+    table.dataTable {
+        font-size: 0.8em;
+        width:100%;
+    }
+    tfoot {
+        display: table-header-group;
+        vertical-align: middle;
+        border-color: inherit;
+    }
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;   
+    }
+</style>
+<div class="container-fluid">
+    <div class="mb-20"><a href="@Url.Action("Index", "Management")">Main Grid</a> | <a href="@Url.Action("Index", "Management", new { gridType = "NR" })">NR Grid</a> | <a href="@Url.Action("QuickContact", "Management")">Quick Contacts</a></div>
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>DQFU Grid</h2>
+            <div id="eventList" class="table-responsive">
+                <table id="gridTable" class="display table table-bordered table-striped table-hover">
+                    <tfoot>
+                        <tr>
+                            <th>Filter:</th>
+                            <th class="Yes">DQReady</th>
+                            <th class="Yes">DQReadyDate</th>
+                            <th class="Yes">Assigned To</th>
+                            <th class="Yes">Agency</th>
+                            <th class="Yes">Org ID</th>
+                            <th class="Yes">Action Due</th>
+                            <th class="Yes">Local Time</th>
+                            <th class="Yes">State</th>
+                            <th class="Yes">Status</th>
+                            <th class="Yes">Contacts</th>
+                            <th class="Yes">Events</th>
+                            <th class="Yes">Last Event Date</th>
+                            <th class="Yes">DQ Days OBD</th>
+                            <th></th>
+                            <th></th>
+                            <th class="Yes">DQ Max Attempts</th>
+                        </tr>
+                    </tfoot>
+                    <thead>
+                        <tr>
+                            @if (User.IsInRole("assignmentsedit") || User.IsInRole("eventmanageredit"))
+                            {
+                                <th scope="col">#</th>
+                            }
+                            <th scope="col">DQReady</th>
+                            <th scope="col">DQReadyDate</th>
+                            <th scope="col">Assigned To</th>
+                            <th scope="col">Agency</th>
+                            <th scope="col">Org ID</th>
+                            <th scope="col">Action Due</th>
+                            <th scope="col">Local Time</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Contacts</th>
+                            <th scope="col">Events</th>
+                            <th scope="col">Last Event Date</th>
+                            <th scope="col">DQ Days OBD</th>
+                            <th scope="col">Top 150</th>
+                            <th scope="col">SA</th>
+                            <th scope="col">DQ Max Attempts</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*@{ var sModel = User.IsInRole("assignmentsedit") ? Model.Where(x => x.Followup.AssignedTo == User.Identity.Name) : Model; }*@
+
+                        @foreach (var org in Model)
+                        {
+                        <tr>
+
+                            @if (User.IsInRole("assignmentsedit") || User.IsInRole("eventmanageredit"))
+                            {
+                                <td> <a href="#assignModal" data-toggle="modal" data-org="@org.OrganizationId" data-year="@org.Year" data-agency="@org.Agency" data-assign="@org.Followup?.AssignedTo" data-maxAttempt="@org.Followup?.MaxAttempts" data-maxAttemptNR="@org.Followup?.NRMaxAttempts" data-specialCase="@org.SpecialCaseCode">Edit</a></td>
+                            }
+                            <td class="text-center">@org.Followup?.DQReady</td>
+                            <td>@org.Followup?.DQReadyDate?.ToString("MM/dd/yyy")</td>
+                            <td>@org.Followup?.AssignedTo</td>
+                            <td><a href="@Url.Action("AgencyProfile", "Client", new { id = org.OrganizationId })">@org.Agency</a></td>
+                            <td><a href="@Url.Action("AgencyProfile", "Client", new { id = org.OrganizationId })">@org.OrganizationId</a></td>
+                            @if (org.ActionDue == null)
+                            {
+                                <td class="text-center"><a href="@Url.Action("CreateActionDue", "Management", new { organizationId = org.OrganizationId })">Create Action</a></td>
+                            }
+                            else
+                            {
+                                <td class="text-center"><a href="@Url.Action("EditActionDue", "Management", new { id = org.ActionDue.OrganizationActionId })">@org.ActionDue.ActionDueDate &nbsp;&nbsp; @org.ActionDue.ActionNotes</a></td>
+
+                            }
+                            <td class="text-right">@org.LocalTime</td>
+                            <td class="text-center">@org.State</td>
+                            <td class="text-center"><a href="@Url.Action("Index", "Form", new { instrumentId = org.Instrument.InstrumentId, organizationId = org.OrganizationId, year = org.Year })">@org.AgencyStatus?.AgencyStatusCodeId</a></td>
+                            <td class="text-center"><a href="@Url.Action("Contacts", "Contact", new { organizationId = org.OrganizationId, year = org.Year })">@org.Contacts.Count</a></td>
+                            <td class="text-center"><a href="@Url.Action("EventsTracker", "Event", new { organizationId = org.OrganizationId, year = org.Year })">@(org.Events.Count > 0 ? org.Events[0].EventId.ToString() : "")</a></td>
+                            <td>@(org.Events.Count > 0 ? org.Events[0].EventDate.ToString("MM/dd/yyyy") : "" )</td>
+                            <td class="text-center"> </td>
+                            <td class="text-center">
+                                @if (org.IsTop150 == true)
+                                {<i class='fa fa-check'></i>}
+                            </td>
+                            <td class="text-center">
+                                @if (org.Followup?.SupervisorAlert == true)
+                                {<i class="fa fa-check"></i>}
+                            </td>
+                            <td class="text-center">@org.Followup?.MaxAttempts</td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+    <!-- Assign Modal -->
+    <div class="modal fade" id="assignModal" tabindex="-1" role="dialog" aria-labelledby="assignModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="assignModalLabel">DQ Assignment</h4>
+                    <h5 id="agency_name" class="mt-20 mb-10"> </h5>
+                </div>
+                <form asp-controller="Management" asp-action="Assignment" class="mb-0" method="post" id="assignform" asp-antiforgery="true">
+                    <div class="modal-body">
+
+                        <input type="hidden" id="organizationId" name="organizationId" value="" />
+                        <input type="hidden" id="year" name="year" value="" />
+                        <input type="hidden" id="gridtype" name="gridtype" value="Dqfu" />
+                        <input type="hidden" id="MaxAttemptsNR" name="MaxAttemptsNR" value="" />
+                        <input type="hidden" id="SpecialCaseCode" name="SpecialCaseCode" value="" />
+
+                        <div class="form-group @( !User.IsInRole("assignmentsedit") ? "hidden" : "" ) ">
+                            <label for="assigned_to" class="control-label">Assigned To:</label>
+                            <select id="AssignedTo" name="AssignedTo" class="form-control">
+                                @foreach (var ix in assignUsers)
+                                {
+                                    <option value="@ix">@ix</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="max_attempts" class="control-label">Max Attempts:</label>
+                            <select id="MaxAttempts" name="MaxAttempts" class="form-control">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                            </select>
+                            @*<input type="number" class="form-control" id="MaxAttempts" name="MaxAttempts" value="">*@
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="Save">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!--end container-fluid-->
+
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#gridTable tfoot th.Yes').each(function () {
+            var title = $('#gridTable tfoot th.Yes').eq($(this).index()).text();
+            $(this).html('<input type="text" placeholder=" " />');
+        });
+        var gridTable = $('#gridTable').DataTable({
+            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "pageLength": 30,
+            "sDom": "lrtip",
+            "stateSave": true
+        });
+        gridTable.columns().every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() != this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+
+        });
+        // Restore state
+        var state = gridTable.state.loaded();
+        if (state) {
+            gridTable.columns().eq(0).each(function (colIdx) {
+                var colSearch = state.columns[colIdx].search;
+                if (colSearch.search) {
+                    $('input', gridTable.column(colIdx).footer()).val(colSearch.search);
+                }
+            });
+            gridTable.draw();
+        }
+
+        $("#assignModal").on('show.bs.modal', function (e) {
+            var id = $(e.relatedTarget).data('org');
+            var yr = $(e.relatedTarget).data('year');
+            var assign = $(e.relatedTarget).data('assign');
+            var ma = $(e.relatedTarget).data('maxattempt');
+            var maxNR = $(e.relatedTarget).data('maxattemptnr');
+            var specialCase = $(e.relatedTarget).data('specialcase');
+            var agency = $(e.relatedTarget).data('agency') + " ( " + id + " )";
+            ma = (ma == "") ? "0" : ma;
+
+            $("#agency_name").text(agency);
+            $("#organizationId").val(id);
+            $("#year").val(yr);
+            $("select option[value='" + assign + "']").prop("selected", "selected").change();
+            $("#MaxAttempts").val(ma);
+            $("#MaxAttemptsNR").val(maxNR);
+            $("#SpecialCaseCode").val(specialCase);
+        });
+
+        $("#Save").on('click', function (e) {
+            $("#assignModal").modal('hide');
+            $("#assignform").submit();
+        })
+    })
+</script>

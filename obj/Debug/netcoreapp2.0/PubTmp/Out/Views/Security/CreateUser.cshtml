@@ -1,0 +1,60 @@
+﻿@model ASJ.ViewModels.Security.CreateUserViewModel
+@{
+    ViewData["Title"] = "CreateUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Create User</h2>
+        </div>
+    </div>
+    <form asp-controller="Security" asp-action="CreateUser" method="post" asp-antiforgery="true">
+        <div class="row">
+            <div class="col-sm-12">
+                @*<div asp-validation-summary="All" class="text-danger"></div>*@
+                @if (Model.Error != null)
+            {
+                <div class="alert alert-warning margin-bottom-10"><span asp-validation-for="Error"></span></div>
+        }
+        @*@if (Model.Error != null)
+        {
+            <div class="alert-danger" style="padding: 10px; margin-bottom: 10px;">@(Model.Error)</div>
+        }*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="DisplayName">Display name for this user:</label>
+                <input class="form-control" type="text" asp-for="DisplayName" placeholder="Display Name*" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+                <label for="Username">Username for this user:</label>
+                <input class="form-control" type="text" asp-for="Username" placeholder="Username*" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+                <label for="Email">Email address for this user:</label>
+                <input class="form-control" type="email" asp-for="Email" placeholder="Email*" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <label for="Password">Password for this user:</label>
+                <input class="form-control" type="password" asp-for="Password" placeholder="Password*" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="col-sm-4">
+                <label for="SelectedRoleGroupID">Select a role group for this user:</label>
+                <select asp-for="SelectedRoleGroupID" class="form-control" asp-items="@(new SelectList(Model.RoleGroups,"RoleGroupID","RoleGroupName"))">
+                    <option>Select</option>
+                </select>
+                <span asp-validation-for="SelectedRoleGroupID" class="text-danger"></span>
+            </div>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Create User" />
+    </form>
+</div>
+

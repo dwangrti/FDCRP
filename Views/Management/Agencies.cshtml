@@ -1,0 +1,63 @@
+﻿@model List<ASJ.Models.Organization>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Agency Profiles <a title="Add New" href="@Url.Action("CreateAgency", "Management")" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add New</a></h2>
+            <div id="orgList" class="table-responsive">
+                <table id="orgTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">Organization ID</th>
+                            <th scope="col">Year</th>
+                            <th scope="col">Agency Name</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">City</th>
+                            <th scope="col">IsPrivate</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Zip</th>
+                            <th scope="col"> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var org in Model)
+                        {
+                            <tr>
+                                <td class="dt-center"><a href="@Url.Action("AgencyProfile", "Client", new { id = org.OrganizationId })">@org.OrganizationId</a></td>
+                                <td class="dt-center">@org.Year</td>
+                                <td class="dt-center">@org.Name</td>
+                                <td class="dt-center">@org.Address</td>
+                                <td class="dt-center">@org.City</td>
+                                <td class="dt-center text-center"><input type='checkbox' disabled="disabled" @(org.IsPrivate ? "checked" : "") /></td>
+                                <td class="dt-center">@org.State</td>
+                                <td class="dt-center">@org.Zip</td>
+                                <td align="center">
+                                    @*<a title="DataEntry" href="@Url.Action("Index", "Form", new { instrumentId = 1, organizationId = org.OrganizationId, year = org.Year })">
+                                            <i class="icon-pencil"></i>
+                                        </a>&nbsp;&nbsp;*@
+                                    <a title="Profile" href="@Url.Action("AgencyProfile", "Client", new { id = org.OrganizationId })">
+                                        <i class="icon-folder-open"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div><!--end table-responsive-->
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-fluid-->
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#orgTable').DataTable({
+            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "pageLength": 15,
+            "pagingType": "full_numbers",
+            "sDom": "flrtip"
+        });
+    })
+</script>

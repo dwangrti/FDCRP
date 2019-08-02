@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@model ASJ.ViewModels.Form.DQFUViewModel
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+
+
+@{
+    ViewData["Title"] = "Da.ta Quality Checks";
+}
+
+<div class="container">
+    <div class="row">
+        <p>Thanks for submitting your agency’s data to the ASJ! We will review your data and contact you if we have any questions.</p>
+    </div><!--end row-->
+</div><!--end container-->
+

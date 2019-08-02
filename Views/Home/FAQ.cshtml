@@ -1,0 +1,264 @@
+﻿
+@{
+    var Org = ViewData["Org"] as Organization;
+
+    if (this.User.Identity.IsAuthenticated)
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    }
+    ViewData["Title"] = "FAQ";
+}
+
+<div class="container">
+    @if(Org != null) { 
+      <a id="start_form" href="@Url.Action("Index", "Form", new { instrumentId = @Org.InstrumentId, organizationId = @Org.OrganizationId, year = @Org.Year })" class="hidden">Enter Data</a>
+    }
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 id="toc">Frequently Asked Questions</h2>
+
+            <ul class="list-unstyled list-links">
+                <li>
+                    <a href="#ds_online" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What are the requirements for federal law enforcement agencies under the Death in Custody Reporting Act (DCRA)?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_credentials" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is the DCRA Collection Program?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_errors" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is the Bureau of Justice Statistics?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_breakoff" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What federal agencies are required to report to the DCRA Collection Program?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_bymail" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What deaths are reportable to the DCRA Collection Program?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_byfax" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> My Agency Has No Deaths to Report. Do I Have to Fill Anything Out?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_email" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is an Arrest-Related Death?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_timing" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is a Detention/Incarceration Death?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_editing" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is The Difference Between an Arrest-Related and Detention/Incarceration Death?
+                    </a>
+                </li>
+                <li>
+                    <a href="#ds_saveprint" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> What is the Purpose of the DCRA Data Collection Forms?
+                    </a>
+                </li>
+                <li>
+                    <a href="#abt_asj" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> How do I report data to the DCRA Collection Program?
+                    </a>
+                </li>
+                <li>
+                    <a href="#abt_selection" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> Are there any other ways to report data to the DCRA Collection Program?
+                    </a>
+                </li>
+                <li>
+                    <a href="#abt_importance" class="scrollTo" data-offset="180">
+                        <i class="fa fa-angle-double-right"></i> Who is RTI?
+                    </a>
+                </li>
+            </ul>
+ 
+            <div class="divider divider-center nomargin-top margin-bottom-80">
+                <!-- divider -->
+                <i class="fa fa-chevron-down"></i>
+            </div>
+
+            <h2 id="ds_online" class="size-20">What are the requirements for federal law enforcement agencies under the Death in Custody Reporting Act (DCRA)?</h2>
+            <p>President Obama signed the Death in Custody Reporting Act (DCRA) of 2013 (P.L. 113-242) into law on December 18, 2014. The Act requires the head of each federal law enforcement agency to report annually to the Attorney General "information regarding the death of any person who is—</p>
+
+            <ol>
+                <li>detained, under arrest, or is in the process of being arrested by any officer of such Federal law enforcement agency (or by any State or local law enforcement officer while participating in and for purposes of a Federal law enforcement operation, task force, or any other Federal law enforcement capacity carried out by such Federal law enforcement agency); or</li>
+                </br>
+                <li>en route to be incarcerated or detained, or is incarcerated or detained at—(A) any facility (including any immigration or juvenile facility) pursuant to a contract with such Federal law enforcement agency; (B) any State or local government facility used by such Federal law enforcement agency; or (C) any Federal correctional facility or Federal pre-trial detention facility located within the United States."</li>
+            </ol>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_credentials" class="size-20">What is the DCRA Collection Program?</h2>
+            <p>The DCRA Collection Program collects all mandatory reports as defined by the DCRA of 2013 (P.L. 113-242). The Act requires reporting for each fiscal year, beginning with Fiscal Year 2016.</p>
+            <p>The U.S. Department of Justice has designated the Bureau of Justice Statistics (BJS) to collect all federal law enforcement agency reports as required by the DCRA of 2013 (P.L. 113-242). To collect these reports, BJS will conduct a survey of federal agencies with law enforcement, detention, and/or incarceration functions.</p>
+            <p>Active data collection under the FDCRP has been temporarily postponed while BJS reviews the design of the survey. BJS will begin collecting information about deaths that occurred in FY 2018 shortly. Federal law enforcement agencies that fall under the reporting requirements specified in the Act will be contacted at that time to participate in the survey.</p>
+            <p>If you have any questions, please contact <a href="mailto:jessica.stroop@usdoj.gov">Jessica Stroop</a>, Federal Death in Custody Reporting Program Manager, BJS.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_errors" class="size-20">What is the Bureau of Justice Statistics?</h2>
+            <p>The U.S. Department of Justice has designated the Bureau of Justice Statistics (BJS) to collect all federal law enforcement agency reports as required by the DCRA of 2013 (P.L. 113-242). BJS is the principal statistical agency of the U.S. Department of Justice. BJS' primary function is the compilation and analysis of criminal justice data and the dissemination of information for statistical purposes.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_breakoff" class="size-20">What federal agencies are required to report to the DCRA Collection Program?</h2>
+            <p>All federal agencies with law enforcement, detention and/or incarceration functions are required to report to the DCRA Collection Program.</p>
+
+            <ul>
+                <li>federal agencies with <b>law enforcement</b> functions employ at least one full-time officer with arrest powers.</li>
+
+                <li>federal agencies with <b>detention/ incarceration</b> functions have the authority to detain or incarcerate individuals for violation of federal criminal or administrative law in federally- or contractually-operated facilities.</li>
+            </ul>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_bymail" class="size-20">What deaths are reportable to the DCRA Collection Program?</h2>
+            <p>Federal law enforcement agencies should report all arrest-related and detention/ incarceration deaths that occurred under their jurisdiction in a given fiscal year. A death is <b>arrest-related</b> when the incident causing the death (e.g., gunshot wound, self-inflicted injury) occurred while the decedent's freedom to leave was restricted by the responding federal law enforcement agency, either in the field or in a temporary holding facility. <b>Incarceration/ detention</b> deaths are those that occur while the decedent was under your agency's supervision, detained or incarcerated for violation of federal criminal or administrative law, and housed in any facility designed to detain or incarcerate such individuals for longer than 72 hours.</p>
+            <p>If you are unsure whether a death is reportable to the DCRA Collection Program, please contact the Program Helpdesk (1-877-475-7039; <a href="mailto:doj-dcra@rti.org">doj-dcra@rti.org</a>).</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_byfax" class="size-20">My Agency Has No Deaths to Report. Do I Have to Fill Anything Out?</h2>
+            <p>Yes. If your agency has no deaths to report, you need to submit only the DCRA Annual Summary (CJ-13). Completing this form will take about 5 minutes. The information collected is necessary to calculate a true count of all deaths as defined by the DCRA of 2013.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_email" class="size-20">What is an Arrest-Related Death?</h2>
+            <p>A death is arrest-related when the incident causing the death (e.g., gunshot wound, self-inflicted injury) occurred while the decedent's freedom to leave was restricted by the responding federal law enforcement agency, either in the field or in a temporary holding facility. Arrest-related deaths include:</p>
+
+            <ul>
+                <li>All deaths that occurred while the decedent's freedom to leave was restricted by federal law enforcement prior to, during, or following an arrest.</li>
+                <li>All deaths resulting from any use of force by law enforcement personnel acting in an official capacity (e.g., officer-involved shootings, accidental deaths caused by less-than-lethal weapons or tactics).</li>
+                <li>Fatal medical conditions that present during an arrest-process (e.g., cardiac arrest).</li>
+                <li>Deaths that occur during transport to or from law enforcement, detention, incarceration or medical facilities.</li>
+                <li>Any death while the decedent was confined in a lockup or booking center (i.e., facilities designed to hold detainees for no longer than 72 hours).</li>
+                <li>Any death that occurred during an interaction with federal law enforcement personnel during response to medical or mental health assistance (e.g., response to suicidal persons).</li>
+
+            </ul>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_timing" class="size-20">What is a Detention/Incarceration Death?</h2>
+            <p>Incarceration/ detention deaths are those that occur while the decedent was detained or incarcerated for violation of federal criminal or administrative law and housed in any facility designed to detain or incarcerate such individuals for longer than 72 hours. Detention/ incarceration deaths include:</p>
+
+            <ul>
+                <li>All deaths of persons confined in correctional facilities operated by the responding federal agency, whether housed under your jurisdiction or that of another agency (federal, state, or local).</li>
+                <li>All deaths of persons under your jurisdiction, but housed in private correctional facilities.</li>
+                <li>All deaths of persons under your jurisdiction but confined in special facilities (e.g., medical/treatment/release centers, halfway houses, police/court lockups, and work farms).</li>
+                <li>All deaths of persons in transit to or from your facility while under your supervision.</li>
+            </ul>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_editing" class="size-20">What is The Difference Between an Arrest-Related and Detention/Incarceration Death?</h2>
+            <p>Detention/ incarceration deaths occur in facilities designed to hold individuals for more than 72 hours. Arrest-related deaths occur in the field or in temporary holding facilities or staging areas. If the incident causing the death occurred prior to incarceration (e.g., death due to ingestion of an illicit substance), but the actual death occurred while the decedent was confined in a facility designed to hold individuals for more than 72 hours, the death is considered to be detention/ incarceration. When in doubt, consider where the actual death occurred to determine whether it is arrest-related or a detention/ incarceration death.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="ds_saveprint" class="size-20">What is the Purpose of the DCRA Data Collection Forms?</h2>
+            <p><b><i>CJ-13: DCRA Annual Summary Form</i></b>- Requests federal law enforcement agencies to identify all deaths under DCRA, occurring in a given fiscal year.</p>
+            <p><b><i>CJ-13A: Arrest-Related Death Incident Report</i></b>- For each identified arrest related-death, federal law enforcement agencies provide information on decedent characteristics and circumstances surrounding the death.</p>
+            <p><b><i>CJ-13B: Detention/Incarceration Death Incident Report</i></b>- For each identified detention/ incarceration death, federal law enforcement agencies provide information on decedent characteristics and circumstances surrounding the death.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="abt_asj" class="size-20">How do I report data to the DCRA Collection Program?</h2>
+            <p>Data may be entered directly into the online forms, which are available through the DCRA website, <a href="www.doj-dcra.org">www.doj-dcra.org</a>.</p>
+            <p>All access to the reporting section of the DCRA Collection Program website requires a secure login and password. Each federal law enforcement agency will receive instructions to log into the system. If you are having difficulty accessing the system or have not received your login information, please call the DCRA Collection Program Helpdesk at (877) 262-7654 or send an e-mail to <a href="mailto:doj-dcra@rti.org">doj-dcra@rti.org</a>.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="abt_selection" class="size-20">Are there any other ways to report data to the DCRA Collection Program?</h2>
+            <p>All forms may be downloaded in hard copy format from the DCRA Collection Program website (<a href="http://www.doj-dcra.org/" target="_blank">http://www.doj-dcra.org</a>). Hard copy forms can be submitted via mail or password-protected/encrypted email. If you have any questions about how to submit the forms securely, please send an e-mail to <a href="mailto:doj-dcra@rti.org">doj-dcra@rti.org</a>.</p>
+            <div class="headline low-margin">
+                <h4>How do I submit data by mail?</h4>
+            </div>
+            <p>Please mail your completed forms to:</p>
+            <blockquote>
+                RTI International<br />
+                c/o Duren Banks, DCRA Collection Program<br />
+                3040 Cornwallis Road, P.O. Box 12194<br />
+                Research Triangle Park, NC 27709-2194
+            </blockquote>
+            <div class="headline low-margin">
+                <h4>How do I submit scanned data by e-mail?</h4>
+            </div>
+            <p>If you prefer to scan your paper forms and send them via e-mail, you may send the images in a password-protected/encrypted email to <a href="mailto:doj-dcra@rti.org">doj-dcra@rti.org</a>. Please note that because of the large size of these messages, this is the <em>least</em> preferred mode of submission.</p>
+
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+            <h2 id="abt_importance" class="size-20">Who is RTI?</h2>
+            <p>RTI International is a nonprofit research institute that works as the data collection agent for the DCRA Collection Program. RTI has been supporting BJS's efforts to collect arrest-related and detention/ incarceration deaths from state and local law enforcement agencies since 2009. For more information about RTI, visit <a href="http://www.rti.org/" target="_blank">http://www.rti.org</a>.</p>
+            <div class="divider divider-border divider-right">
+                <a class="scrollTo" href="#toc" data-offset="-110">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+
+ 
+
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+<script>
+    $(document).ready(function () {
+        //The menu option 'Enter Data' will trigger relevant start_form link.
+        $("#poc_submit_data").click(function () {
+            $("#start_form")[0].click();
+        });
+    });
+</script>

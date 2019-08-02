@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model List<ASJ.Models.Organization>
+
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    ViewData["Title"] = "Client Home";
+}
+<style>
+    div.dataTables_wrapper div.dataTables_info {
+        padding-bottom: 10px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Agencies</h2><td class="text-center">
+
+                <div id="orgList" class="table-responsive">
+                    <table id="orgTable" class="table table-bordered table-striped table-hover" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Organization ID</th>
+                                <th scope="col">Year</th>
+                                <th scope="col">Agency Name</th>
+                                <th scope="col">State</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var org in Model)
+                            {
+                            <tr>
+                                <td class="dt-center"><a href='@Url.Action("AgencyProfile", "Client", new { id = @org.OrganizationId})'>@org.OrganizationId</a></td>
+                                <td class="dt-center">@org.Year</td>
+                                <td class="dt-center">@org.Name</td>
+                                <td class="dt-center">@org.State</td>
+                                <td class="dt-center">@org.OrganizationFollowup.AgencyStatusCodeId</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#orgTable').DataTable({
+            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "pageLength": 15,
+            "sDom": '<"top"i>flrtip',
+            "language": {
+                "searchPlaceholder": "Type search text"
+            },
+            "order": [[1, "desc"], [2, "asc"]]
+        });
+    })
+</script>
+
+
+
+
+

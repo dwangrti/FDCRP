@@ -1,0 +1,29 @@
+﻿<li>
+    <a href="@Url.Action("Index", "Respondent")">HOME</a>
+</li>
+<li>
+    @if (ViewBag.referenceYear != null && ViewBag.OrganizationId != null && ViewBag.InstrumentId != null)
+    {
+        <a href="@Url.Action("Instructions", "Form", new { instrumentId =  @ViewBag.InstrumentId, organizationId = @ViewBag.OrganizationId, year = @ViewBag.referenceYear })" class="btn btn-primary btn-sm">ENTER DATA</a>
+        @*
+            <a href="@Url.Action("Index", "Form", new { instrumentId =  @ViewBag.InstrumentId, organizationId = @ViewBag.OrganizationId, year = @ViewBag.referenceYear })" id="poc_submit_data">ENTER DATA</a>
+        *@
+    }
+    else
+    {
+        <a href="@Url.Action("Index", "Respondent")" id="poc_submit_data">ENTER DATA</a>
+
+
+    }
+
+</li>
+
+@Html.Partial("_referenceForms")
+
+<li>
+    <a href="@Url.Action("FAQ", "Home")">FAQs</a>
+</li>
+@Html.Partial("_MoreInformation")
+<li>
+    <a href="@Url.Action("Logout","Home")">LOGOUT</a>
+</li>

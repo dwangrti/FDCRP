@@ -1,0 +1,158 @@
+﻿@model ASJ.Models.OrganizationAction
+@{
+    ViewData["Title"] = "Action Due";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Action Due:  @Model.Organization.Name</h3>
+            <form asp-controller="Management" asp-action="SaveActionDue" method="post" asp-antiforgery="true">
+                @Html.HiddenFor(model => model.Organization)
+                @Html.HiddenFor(model => model.Organization.OrganizationId)
+                @Html.HiddenFor(model => model.Organization.Year)
+                @Html.HiddenFor(model => model.OrganizationActionId)
+
+                <fieldset>
+                    @*<div class="row">
+                            <label>@Model.Organization.Name</label>
+                        </div>*@
+                    <div class="row">
+                        <label>Please select action due date and time:</label>
+                    </div>
+                    <div class="row">
+                        <input id="datetimepicker" type="text" asp-for="ActionDueDate">
+                    </div>
+                    <div class="row">
+                        <label>Quick Buttons:</label>
+                    </div>
+
+
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for an hour from now" onclick="SetActionDue(1)" />
+                    </div>
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for 3 hours from now" onclick="SetActionDue(3)" />
+                    </div>
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for tomorrow" onclick="SetActionDue(24)" />
+                    </div>
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for 2 days from now" onclick="SetActionDue(48)" />
+                    </div>
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for 3 days from now" onclick="SetActionDue(72)" />
+                    </div>
+
+                    <div class="row">
+                        <input type="button" id="hr1Btn" value="Set for 1 week from now" onclick="SetActionDue(168)" />
+                    </div>
+
+                    <div class="row">
+                        <label>Action Last Created By: @Model.CreatedBy</label>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-6 col-sm-6">
+                                <label for="ActionNotes">Action Notes:</label>
+                                <input class="form-control" type="text" asp-for="ActionNotes" />
+                                <span asp-validation-for="ActionNotes" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <input id="btnSubmit" class="btn btn-primary" type="submit" value="Save" />
+                <input id="btnCancel" class="btn btn-primary" onclick="closeOrBack(); return false" type="submit" formaction="/Management" value="Cancel" />
+                <input id="btnDelete" class="btn btn-primary" onclick="deleteAction(event)" type="button" value="Delete" />
+
+                <div id="succMsg" class="text-success"></div>
+            </form>
+        </div><!--end col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+
+<script type="text/javascript">
+    function closeOrBack() {
+        if (document.referrer.indexOf("EventsTracker") == -1) {//they did not come from eventstracker page so close the window
+            window.close();
+        }
+        else {
+            history.back()
+        }
+    }
+
+    $(document).ready(function () {
+        jQuery('#datetimepicker').datetimepicker(
+            {
+                inline: false,
+                minDate: '0'
+            }
+        );
+
+    });
+
+    function deleteAction() {
+        var referer = document.referrer;
+        var organizationActionId = $('#OrganizationActionId').val();
+        if (!referer) { referer = window.location.protocol + "//" + window.location.host + "/Management" }
+        event.preventDefault();
+        var token = $('input[name="__RequestVerificationToken"]').val();
+        $.ajax({
+            type: 'POST',
+            url: '/Management/DeleteActionDue',
+            dataType: 'html',
+            data: { OrganizationActionId: organizationActionId, __RequestVerificationToken: token },
+            success: function (html) {
+                $('#succMsg').html(html + " Please wait to be redirected...");
+                $('#datetimepicker').val("");
+                window.setTimeout(function () {
+
+                    // Move to a new location or you can do something else
+                    window.location.href = referer;
+
+                }, 2000);
+            },
+            complete: function (d) {
+            },
+            error: function (ex) {
+                alert('Failed to delete action as not found');
+            }
+        });
+        return false;
+    }
+
+
+    function SetActionDue(hours) {
+        var today = new Date();
+        var days = 0;
+        if (hours >= 24) {
+            var days = hours / 24;
+            hours = 0;
+            today.setDate(today.getDate() + days);
+        }
+        else {
+            today.setHours(today.getHours() + hours);
+        }
+
+        var date = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate();
+        var time;
+        if (today.getMinutes() < 10) {
+            time = today.getHours() + ":0" + today.getMinutes();
+        }
+        else
+            time = today.getHours() + ":" + today.getMinutes();
+
+        var dateTime = date + ' ' + time;
+        jQuery('#datetimepicker').datetimepicker(
+            {
+                value: dateTime
+                //value: '2018/07/22 14:39'  must be this format, took time to figure this out ...
+            }
+        );
+    }
+</script>

@@ -1,0 +1,61 @@
+﻿@model List<ASJ.ViewModels.Client.QCDetailViewModel>
+@{
+    ViewData["Title"] = "Quality Control Error Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            @*<form asp-controller="Form" method="post" id="iDQFU">*@
+            @if (Model==null || Model.Count==0) 
+            {
+                <h2> No Error records found</h2>            
+            }
+            else
+            {
+                <h2>Data Quality Errors: @Model.First().Instrument.Name </h2>
+            <p><a href="@Url.Action("AgencyProfile", "Client", new { id =  @Model.First().OrganizationId })">@Model.First().Agency </a> <br />    @Model.First().OrganizationId</p>
+            <p></p>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                Error date
+                            </th>
+                            <th>
+                                Question
+                            </th>
+                            <th>
+                                Error text
+                            </th>
+                            <th>
+                                Current Year Rang
+                            </th>
+                            <th>
+                                Previous Year Range
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var error in Model)
+                        {
+                        <tr>
+                            <td>@error.FirstAppeared</td>
+                            <td>@error.Location</td>
+                            <td>@error.QCDetails</td>
+                            <td>@error.CYrange</td>
+                            <td>@error.PYrange</td>
+
+                        </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+            }
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->

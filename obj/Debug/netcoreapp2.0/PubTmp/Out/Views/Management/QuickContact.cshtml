@@ -1,0 +1,148 @@
+﻿@model List<ASJ.Models.OrganizationContacts>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+@{
+    ViewData["Title"] = "Quick Contact";
+}
+
+<style>
+    table.dataTable {
+        font-size: 0.8em;
+        width: 100%;
+    }
+    tfoot {
+        display: table-header-group;
+        vertical-align: middle;
+        border-color: inherit;
+    }
+
+        tfoot input {
+            width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
+        }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Quick Contacts</h2>
+            <div id="qcList" class="table-responsive">
+                <table id="qcTable" class="table table-bordered table-striped table-hover">
+                    <tfoot>
+                        <tr>
+                            <th>Org ID </th>
+                            <th>Agency Name</th>
+                            <th>State</th>
+                            <th>Salutation </th>
+                            <th>Title </th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Extension</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Role</th>
+                        </tr>
+                    </tfoot>
+                    <thead>
+                        <tr>
+                            <th scope="col">Org ID </th>
+                            <th scope="col">Agency Name</th>
+                            <th scope="col">State</th>
+                            <th scope="col">Salutation </th>
+                            <th scope="col">Title </th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Extension</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var contact in Model)
+                        {
+                        <tr>
+                            <td><a href="@Url.Action("AgencyProfile", "Client", new { id = @contact.Organization.OrganizationId })">@contact.Organization.OrganizationId</a></td>
+                            <td><a href="@Url.Action("AgencyProfile", "Client", new { id = @contact.Organization.OrganizationId })">@contact.Organization.Name</a></td>
+                            <td>@contact.Organization.State</td>
+                            <td class="text-center">@contact.Salutation</td>
+                            <td class="text-right">@contact.Title</td>
+                            <td class="text-right">@(contact.Firstname + " " + contact.LastName)</td>
+                            <td class="text-right">  @*the phone number breaks to the next line, could not figure out why*@ 
+                                @if (contact.Phone!=null && contact.Phone.Length > 6)
+                                {
+                                    @String.Format("({0}) {1}-{2}", contact.Phone.Substring(0, 3), contact.Phone.Substring(3, 3), contact.Phone.Substring(6, contact.Phone.Length - 6))
+                                }
+                                else
+                                {
+                                    @contact.Phone
+                                }
+                            </td>
+                            <td class="text-right">@contact.PhoneExt</td>
+                            <td class="text-right">@contact.Email</td>
+                            @if (contact.Address2!=null && contact.Address2.Length > 0)
+                            {
+                                <td class="text-right">@(contact.Address1 + ", " + contact.Address2 + ", " + contact.City + ", " + contact.State + ", " + contact.Zip) </td>
+                            }
+                            else
+                            {
+                                <td class="text-right">@(contact.Address1 + ", " + contact.City + ", " + contact.State + ", " + contact.Zip) </td>
+                            }
+                            @if (contact.AgencyHead && contact.PrimaryContact)
+                            {
+                                <td>POC/AG </td>
+                            }
+                            @if (contact.AgencyHead && !contact.PrimaryContact)
+                            {
+                                <td>Agency Head </td>
+                            }
+                            @if (!contact.AgencyHead && contact.PrimaryContact)
+                            {
+                                <td>POC </td>
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!--end .col-sm-12-->
+    </div><!--end row-->
+</div><!--end container-->
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#qcTable tfoot th').each(function () {
+            var title = $('#qcTable tfoot th').eq($(this).index()).text();
+            $(this).html('<input type="text" placeholder=" " />');
+        });
+        var qcTable = $('#qcTable').DataTable({
+           "paging": false,
+            "sDom": "lrtip"
+        });
+        qcTable.columns().every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() != this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+    })
+
+</script>
+

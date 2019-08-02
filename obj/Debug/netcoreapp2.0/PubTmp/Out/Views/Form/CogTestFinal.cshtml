@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    if (Context.Request.Host.Host.Contains("jailsurvey"))
+    {
+        Layout = "~/Views/Shared/_LayoutCogTest.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+}
+@{
+    ViewData["Title"] = "CogTestFinal";
+}
+<div class="container">
+    <div class="row center">
+        <div class="center-block agencyheader">
+            <div id="org_name">
+                <h4>@ViewBag.Agency - @ViewBag.State <small> (@ViewBag.OrganizationId)</small></h4>
+            </div>
+
+        </div>
+    </div><br />
+
+    <h2>Thank You</h2>
+    <div class="fs-16">Thank you for completing the survey. We will contact you at your scheduled interview time to discuss your experience taking the survey. <br />Please download a PDF copy of your survey to reference during the interview by clicking on the "View Form" button below.<br />
+    <a href="@Url.Action("ExportPDF", "Respondent", new { instrumentId = @ViewBag.InstrumentId, organizationId =@ViewBag.OrganizationId, year = @ViewBag.Year })" target="_blank" class="btn btn-primary btn-sm">View Form</a></div>
+    </div>

@@ -1,0 +1,115 @@
+﻿@using System.Text.RegularExpressions
+@using ASJ.Utils
+
+@model List<ASJ.ViewModels.Contact.ContactsViewModel>
+@{
+    ViewData["Title"] = "Agency Contacts";
+    var Organization = ViewData["Organization"] as ASJ.Models.Organization;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    dataTables_wrapper dataTables_length {
+        float: right;
+    }
+
+    .dataTables_filter {
+        float: left !important;
+        margin-right: 30px;
+    }
+
+    #filters {
+        margin: 0 0 30px;
+        border-bottom: 1px solid #eee;
+        border-top: 1px solid #eee;
+    }
+
+    #supervisorAlert, #select_year {
+        margin: 20px 10px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 class="mb-10">Agency Contacts</h2>
+            <div class="mb-10 goback"><a href="javascript:history.back()">Back to Previous Page</a></div>
+            <h4 class="mb-40">@Organization.Name - @Organization.State (@Organization.OrganizationId)</h4>
+
+            <div id="eventList" class="table-responsive">
+                @if (User.IsInRole("contactsedit"))
+                {
+                    <div class="float-right mr-20 mb-20"><a title="Add New" href="@Url.Action("CreateContact", "Contact", new { organizationId = @Organization.OrganizationId, year = @Organization.Year })" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add New</a></div>
+                }
+                <table id="contactTable" class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            @if (User.IsInRole("contactsedit"))
+                            {
+                                <th></th>
+                            }
+                            <th scope="col">Title</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">POC</th>
+                            @*<th scope="col">BackupPOC</th>*@
+                            <th scope="col">AgencyHead</th>
+                            <th scope="col">Address</th>
+                            @*<th scope="col">Make POC</th>
+        <th scope="col">Make Agency Head</th>
+        <th scope="col">Notes</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count > 0)
+                        {
+                            @foreach (var contact in Model) 
+                            {
+                        <tr>
+                            @if (User.IsInRole("contactsedit"))
+                            {
+                                <td class="dt-center"><a href="@Url.Action("EditContact", "Contact", new { contactId = contact.OrganizationContactId })" title="Edit"><i class="fa fa-edit"></i></a></td>
+                            }
+                            <td class="dt-center">@contact.Title</td>
+                            <td class="dt-center">@contact.FirstName @contact.LastName</td>
+                            <td class="dt-center">
+                                @if (@contact.Phone != "" && @contact.Phone != null)
+                                {
+                                    @Extensions.formatPhoneNumber(@contact.Phone);
+                                    @if (@contact.PhoneExt != "" && @contact.PhoneExt != null)
+                                    {
+                                        @:&nbsp; @(contact.PhoneExt == "" ? "" : "ext:" + @contact.PhoneExt)
+                                    }
+                                }
+                            </td>
+                            <td class="dt-center">@contact.Email</td>
+                            <td class="dt-center"><input type='checkbox' disabled="disabled" @(contact.PrimaryContact ? "checked" : "") /></td>
+                            @*<td class="dt-center"><input type='checkbox' disabled="disabled" @(contact.BackupContact ? "checked" : "") /></td>*@
+                            <td class="dt-center"><input type='checkbox' disabled="disabled" @(contact.AgencyHead ? "checked" : "") /></td>
+                            <td class="dt-center">@contact.Address1 , @(contact.Address2 == "" ? "" : @contact.Address2 + ", " ) @contact.City,  @contact.State  @contact.Zip </td>
+                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7">&nbsp; </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#contactTable').DataTable({
+            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "pageLength": 15,
+            "sDom": "flrtip",
+            "columnDefs": [{ "width": "20%", "targets": 1 }],
+            "order": []
+        });
+    })
+</script>

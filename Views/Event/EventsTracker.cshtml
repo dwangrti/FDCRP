@@ -1,0 +1,351 @@
+﻿@using System.Text.RegularExpressions
+@using ASJ.Utils
+
+@model List<ASJ.ViewModels.Event.EventsTrackerViewModel>
+@{
+    ViewData["Title"] = "Events Tracker";
+    var EventFilters = ViewData["EventFilters"] as ASJ.Models.Form.EventFilters;
+    var Organization = ViewData["Organization"] as ASJ.Models.Organization;
+    var EventLookup = ViewData["EventList"] as List<ASJ.Models.LookupEvent>;
+    var CaseNotes = ViewData["CaseNotes"] as List<ASJ.Models.OrganizationNotes>;
+    var YearOptions = EventFilters.year_options;
+    var FilterYears = EventFilters.filter_year;
+    int OrganizationId = EventFilters.organizationId;
+    int Year = EventFilters.year;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #eventTable_wrapper {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .dataTables_filter {
+        float: left !important;
+        margin-right: 30px;
+    }
+
+    #filters {
+        background-color: rgba(0, 100, 164,0.05);
+        padding: 20px;
+        border-bottom: rgba(0,0,0,0.1) 1px solid;
+    }
+
+    #CaseNotes {
+        padding: 20px;
+        overflow-y: auto;
+    }
+
+        #CaseNotes dt {
+            font-weight: normal;
+        }
+
+    #supervisorAlert {
+        margin-top: 20px;
+    }
+
+    .box-icon.box-icon-content {
+        height: 120px;
+    }
+
+    div.dataTables_wrapper div.dataTables_info {
+        padding-bottom: 10px;
+    }
+
+    .box-footer {
+        border-top: rgba(0,0,0,0.1) 1px solid;
+    }
+
+    #eventAdd {
+        border-bottom: rgba(0,0,0,0.1) 1px solid;
+        padding: 20px;
+        margin: 0;
+    }
+
+    #noteAdd {
+        border-bottom: rgba(0,0,0,0.1) 1px solid;
+        padding-bottom: 20px;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2 class="mb-0">Event Tracking</h2>
+            <div class="mb-20 goback"><a href="@Url.Action("AgencyProfile", "Client", new { id = @Organization.OrganizationId })">Go to Agency Profile</a></div>
+            <h4>@Organization.Name - @Organization.State (@Organization.OrganizationId)</h4>
+        </div>
+    </div>
+
+    @*<div class="row">
+            <div class="col-sm-12">
+                <h3>Verification Status</h3>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa fa-check"></i>
+                        <h5>Agency Name / Address</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa">&nbsp;</i>
+                        <h5>Primary Contact</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa fa-check"></i>
+                        <h5>Agency Head</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa">&nbsp;</i>
+                        <h5>Agency Head Election</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa">&nbsp;</i>
+                        <h5>Facilities</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="box-icon box-icon-center box-icon-round box-icon-transparent box-icon-large box-icon-content">
+                    <div class="box-icon-title">
+                        <i class="fa fa-check"></i>
+                        <h5>Summary Data</h5>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="box-static box-transparent box-bordered padding-0">
+                <div class="box-title margin-bottom-0 pt-20 pl-20 pr-20">
+                    <h5>Events</h5>
+                </div>
+                <div id="filters">
+                    <form asp-controller="Event" asp-action="EventsFilter" class="mb-0" method="post" id="filterform" asp-antiforgery="true">
+                        <p class="mb-10">Please select which event year(s) to display:</p>
+                        <div id="select_year" class="ml-20 form-inline">
+                            @foreach (var y in YearOptions)
+                            {
+                                <label for="filter_year_@y" class="filters mr-10"><input type="checkbox" name="filter_year" id="filter_year_@y" value="@y" @(Array.IndexOf(FilterYears, y) == -1 ? "" : "checked") /> @y</label>
+                            }
+                        </div>
+                        <p class="mb-10 mt-10">Please select whether to show system events:</p>
+                        <div id="systemEvents" class="ml-20 form-inline">
+                            <label for="filter_system_yes" class="mr-20"><input type="radio" name="filter_system" id="filter_system_yes" value="yes" class="filters" @(EventFilters.filter_system == "yes" ? "checked" : "" )> Show System Events</label>
+                            <label for="filter_system_no"><input type="radio" name="filter_system" id="filter_system_no" value="no" class="filters" @(EventFilters.filter_system == "no" ? "checked" : "" ) /> Do Not Show System Events</label>
+                        </div>
+                        <input type="hidden" name="organizationId" value="@Organization.OrganizationId" />
+                        <input type="hidden" name="year" value="@Organization.Year" />
+                        <div class="ml-20 mt-20 hidden"><input type="submit" id="Submit" value="Submit" /></div>
+                    </form>
+                    @if (User.IsInRole("eventmanageredit"))
+                    {
+                        <div id="supervisorAlert" class="text-red">
+                            <label for="supervisor_alert" class="mr-20">Supervisor Alert: &nbsp;<input type="checkbox" name="supervisor_alert" value="yes" id="supervisor_alert" @(ViewBag.SupervisorAlert == true ? "checked" : "")></label>
+                        </div>
+                    }
+                </div>
+
+                @if (User.IsInRole("eventmanageredit"))
+                {
+                    <div class="box-footer m-0 p-0">
+                        <div id="EventAdd">
+                            <div id="addEvent" class="collapse">
+                                <form asp-controller="Event" asp-action="EventAdd" method="post" id="eventAdd" asp-antiforgery="true">
+                                    <input type="hidden" name="organizationId" value="@Organization.OrganizationId" />
+                                    <input type="hidden" name="year" value="@Organization.Year" />
+                                    <select name="codeDesc" class="input-sm form-control">
+                                        <option value="">Select Code Description</option>
+                                        @foreach (var ix in EventLookup)
+                                        {
+                                            <option value="@ix.EventId">@ix.CodesEventText</option>
+                                        }
+                                    </select>
+                                    <p class="mt-10 mb-0">Notes:</p>
+                                    <textarea rows="4" name="Notes" class="form-control"></textarea>
+                                    <input type="submit" class="btn btn-primary mt-10" value="Add Event" />
+                                </form>
+                            </div>
+                            <a data-toggle="collapse" data-target="#addEvent" id="addE" class="btn btn-primary m-20"><span>Add Event</span> <i class="icon-caret-down"></i></a>
+                            <a id="setAction" class="btn btn-primary m-20" href="@Url.Action("CreateActionDue", "Management", new { organizationId = @Organization.OrganizationId })">Set Action</a>
+                        </div>
+                    </div>
+                }
+
+                <div id="eventList" class="table-responsive">
+                    <table id="eventTable" class="table table-bordered table-striped table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th scope="col">Code</th>
+                                <th scope="col">Code Description</th>
+                                <th scope="col">Set By</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Count > 0)
+                            {
+                                @foreach (var evnt in Model)
+                                {
+                                    <tr>
+                                        <td class="dt-center">@evnt.EventId</td>
+                                        <td class="dt-center">@evnt.Event.CodesEventText</td>
+                                        <td class="dt-center">@evnt.SetBy</td>
+                                        <td class="dt-center text-right">@evnt.EventDate.ToShortDateString()</td>
+                                        <td class="dt-center">@evnt.EventNotes</td>
+
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div><!--end col-sm-8-->
+        <div class="col-sm-4">
+            <div id="NewEvent" class="box-static box-border-top">
+                <div class="box-title margin-bottom-20">
+                    <h5>Contacts</h5>
+                </div>
+                <table>
+                    <tr>
+                        <td class="bold vertical-align mr-10">POC:</td>
+                        <td>
+                            @if (@ViewBag.POC != null)
+                            {@ViewBag.POC.Salutation@:&nbsp;@ViewBag.POC.Firstname &nbsp;@ViewBag.POC.LastName @if (@ViewBag.POC.Email != null && @ViewBag.POC.Email != "")
+                            {<br />@ViewBag.POC.Email} <br />
+                            @if (@ViewBag.POC.Phone != "" && @ViewBag.POC.Phone != null)
+                            {@Extensions.formatPhoneNumber(@ViewBag.POC.Phone);
+                            //@String.Format("{0:(###) ###-####}", @Convert.ToInt64(@Regex.Replace(@ViewBag.POC.Phone, @"[^0-9]", "")));
+                        } @:&nbsp;@if (ViewBag.POC.PhoneExt != null && ViewBag.POC.PhoneExt != "")
+                            {<span>Ext: @ViewBag.POC.PhoneExt</span>}
+                    }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="bold vertical-align mr-10">DS:</td>
+                        <td>
+                            @if (@ViewBag.DSB != null)
+                            {@ViewBag.DSB.Title@:&nbsp;@ViewBag.DSB.Name @if (@ViewBag.DSB.email != null && @ViewBag.DSB.email != "")
+                            {<br />@ViewBag.DSB.email}  <br />@if (@ViewBag.DSB.Phone != "" && @ViewBag.DSB.Phone != null)
+                            {
+                                @Extensions.formatPhoneNumber(@ViewBag.DSB.Phone);
+                                //@String.Format("{0:(###) ###-####}", @Convert.ToInt64(@Regex.Replace(@ViewBag.DSB.Phone, @"[^0-9]", "")));
+                            }
+                        }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="CaseNotes" class="box-static box-border-top">
+                <div class="box-title margin-bottom-20">
+                    <h5>
+                        Case Notes
+                        @if (User.IsInRole("eventmanageredit"))
+                        {
+                            <a data-toggle="collapse" data-target="#addNotes" id="addN" class="btn btn-primary btn-xs pull-right m-0"><span>Add Case Notes</span> <i class="icon-caret-down"></i></a>
+                        }
+                    </h5>
+                </div>
+                @if (User.IsInRole("eventmanageredit"))
+                {
+                    <div id="CaseNotesAdd">
+                        <div id="addNotes" class="collapse mb-30">
+                            <form asp-controller="Event" asp-action="NotesAdd" method="post" id="noteAdd" asp-antiforgery="true">
+                                <input type="hidden" name="organizationId" value="@Organization.OrganizationId" />
+                                <input type="hidden" name="year" value="@Organization.Year" />
+                                <p class="mb-5 mt-10">Case Notes:</p>
+                                <div><textarea rows="7" class="form-control" name="Notes"></textarea></div>
+                                <input type="submit" value="Add Case Notes" class="btn btn-primary btn-sm mt-5" />
+                            </form>
+                        </div>
+                    </div>
+                }
+                <dl id="notes">
+                    @foreach (var cn in CaseNotes)
+                    {
+                        <dt>@cn.Note</dt>
+                        <dd>Created By: @cn.CreatedBy</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+    </div>
+</div><!--end container-->
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('#eventTable').DataTable({
+            "lengthMenu": [[15, 30, 50, -1], [15, 30, 50, "All"]],
+            "pageLength": 15,
+            "sDom": '<"top"i>flrtip',
+            "order": []
+        });
+
+        $(".filters").change(function () {
+            $("#filterform").submit();
+        });
+        $("#supervisor_alert").change(function () {
+            var Orgdata = {
+                id: $("input[name ='organizationId']").val(),
+                year: $("input[name ='year']").val(),
+                super_alert: $("#supervisor_alert").is(":checked")
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AlertUpdate","Event")",
+                data: JSON.stringify(Orgdata),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (response) {
+                    if (response != null) {
+                        console.log("Id : " + response.id + ", Year : " + response.year + ", Alert :" + response.super_alert);
+                    } else {
+                        alert("Something went wrong");
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        })
+
+        $("#addE").click(function () {
+            $("i", this).toggleClass("icon-caret-down icon-caret-up");
+            var text = $('#addE span').text();
+            $('#addE span').text(text == 'Add Event' ? 'Collapse Add Event' : 'Add Event');
+            //$("#filters").slideToggle("slow");
+            //$("#CaseNotesAdd").slideToggle("slow");
+        });
+        $("#addN").click(function () {
+            $("i", this).toggleClass("icon-caret-down icon-caret-up");
+            var text = $('#addN span').text();
+            $('#addN span').text(text == 'Add Case Notes' ? 'Collapse Add Notes' : 'Add Case Notes');
+            //$("#filters").slideToggle("slow");
+            //$("#EventAdd").slideToggle("slow");
+        });
+
+    })
+
+</script>

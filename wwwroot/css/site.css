@@ -1,0 +1,754 @@
+﻿/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* Contact info*/
+#contact_info {
+    margin-right: 10px;
+}
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+
+/* Header */
+#topNav {
+    background-image: url('~/images/topBg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right top;
+    background-color: #0064a4;
+}
+
+#header h1 {
+    line-height: 60px;
+    color: #fff;
+}
+@media screen and (min-width: 992px) {
+    #header h1 {
+        line-height: 97px;
+    }
+}
+section {
+    padding-top: 166px;
+}
+
+/* No longer making header smaller on scroll
+#header.fixed h1 {
+    line-height: 50px;
+}*/
+
+/* Mega Menu stuff */
+
+/*overwrite link color*/
+#topMain.nav-pills > li > a {
+    color: #fff;
+}
+
+#topMain.nav-pills > li:hover > a, #topMain.nav-pills > li:focus > a {
+    color: #fff;
+    background-color: rgba(0,0,0,0.75);
+    border-radius: 0;
+}
+
+#topMain.nav-pills > li > a.dropdown-toggle::after {
+    opacity: 1;
+}
+
+.mega-menu h4 {
+    margin-left: 14px;
+    margin-right: 14px;
+    color: #ccc;
+}
+
+/* Top Bar */
+#topBar {
+    background-color: #0064a4;
+    /*padding-top: 97px;*/
+}
+@media only screen and (max-width: 992px) {
+    /*#topBar {
+        padding-top: 60px;
+    }*/
+    section {
+        padding-top: 109px;
+    }
+}
+
+    #topBar ul.top-links > li:last-child {
+        border-right: 0;
+    }
+
+    #contact_info i {
+        margin: 0 0 0 10px;
+        color: #fcb53d;
+        line-height: 1.5;
+    }
+
+    #contact_info span {
+        padding: 10px;
+        font-size: 12px;
+        color: #fff;
+    }
+
+    #topBar ul.dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+
+        #topBar ul.dropdown-menu > li > a {
+            padding: 8px 16px 8px 6px;
+        }
+
+    /* Data Tables and Other Tables */
+    .dataTables_filter {
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    .dataTables_length {
+        display: inline-block;
+    }
+
+    .table > thead > tr.blue-head > th {
+        background-color: #0064a4;
+        color: #fff;
+    }
+
+    /* Validation */
+    .field-validation-error {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+    }
+
+    /* Questions */
+    .question-dots {
+        position: relative;
+    }
+
+    div.question-dots:before {
+        top: 74%;
+        border-top: #333 1px dotted;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 0;
+        left: auto;
+        right: 0;
+    }
+
+    div.question-dots h4 {
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+        position: relative;
+        display: inline-block;
+        padding-left: 0;
+        padding-right: 15px;
+        line-height: 50px;
+    }
+
+    input[type='radio'] + label {
+        display: inline-block;
+    }
+
+    /* Boxes */
+    .box-static.box-border-top {
+        margin-bottom: 20px;
+    }
+
+        .box-static.box-border-top .divider,
+        .box-static.box-border-top h4 {
+            margin: 0;
+        }
+
+        .box-static.box-border-top strong {
+            display: block;
+        }
+
+        .box-static.box-border-top p {
+            margin-bottom: 10px;
+        }
+
+        .box-static.box-border-top dd {
+            padding-left: 10px;
+        }
+
+    .box-static .box-inner {
+        background-color: #fff;
+    }
+
+        .box-static .box-inner .list-inline > li {
+            margin-right: 45px;
+        }
+
+            .box-static .box-inner .list-inline > li:last-child {
+                margin-right: 0;
+            }
+
+        .box-static .box-inner .list-group-item {
+            padding: 5px;
+        }
+
+            .box-static .box-inner .list-group-item:first-child {
+                border-top: 2px solid #ddd;
+            }
+
+            .box-static .box-inner .list-group-item:last-child {
+                border-bottom: 0;
+            }
+
+    ul.side-nav .list-group-item a {
+        display: inline-block;
+        color: #b92c28;
+    }
+
+    .box-static .box-inner h5.special-header {
+        font-size: 16px;
+        padding: 5px 5px 7px;
+        border: 0;
+        margin: 0;
+        line-height: 20px;
+    }
+
+    .box-icon.box-icon-center.box-icon-round.box-icon-transparent.box-icon-large.box-icon-content .box-icon-title h4 {
+        min-height: 3em;
+    }
+
+/* Some Overwrites */
+a.btn.btn-sm {
+    line-height: 1.5;
+}
+
+.form-inline .btn {
+    margin-bottom: 8px;
+}
+
+.form-control-sm {
+    height: 30px;
+    padding: 5px 10px;
+    line-height: 1.5;
+    font-size: 12px;
+}
+
+h3 > span.unbold,
+.unbold {
+    font-weight: normal;
+    color: #000;
+}
+
+#Instrument #divTable td .form-control {
+    width: auto;
+    display: inline-block;
+}
+
+#Instrument h3 ul li {
+    font-weight: normal;
+    font-size: 14px;
+}
+
+#Instrument h5 {
+    color: #000;
+}
+
+ul.list-icons > li > span {
+    position: absolute;
+    left: -1.75em;
+    width: 14px;
+    text-align: center;
+    top: 0;
+    margin-right: 10px;
+}
+#Instrument .form-control.input-sm {
+    height: 30px;
+    font-size: 14px;
+    color: #333;
+    border-radius: 0;
+    border: 1px solid #414141;
+}
+#Instrument .checkbox i {
+    border-width: 1px;
+    border-color: #414141;
+    border-radius: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.include-exclude h4.fs-14.unbold {
+    margin-bottom: 0;
+}
+.include-exclude ul {
+    margin-bottom: 15px;
+}
+.include-exclude ul:last-child {
+    margin-bottom: 30px;
+}
+.include-exclude, .include-exclude h4, .include-exclude li {
+    color: #000;
+}
+.include-exclude.indent-two {
+    padding-left: 3em;
+}
+.include-exclude.indent-three {
+    padding-left: 2em;
+}
+
+#Instrument h3, #Instrument h4 {
+    color: #000;
+}
+#Instrument .vertical-align h3,
+#Instrument .vertical-align h4 {
+    margin-bottom: 0;
+}
+.row.vertical-align .nopadding-right.text-right > input.numericInput {
+    max-width: 7rem;
+    display: inline-block;
+}
+
+.specify-question {
+    max-width: 25rem;
+}
+
+input[readonly] {
+    cursor: not-allowed;
+}
+
+.box-border-top.box-bordered.box-transparent {
+    border-left-color: rgba(0,0,0,0.1);
+    border-right-color: rgba(0,0,0,0.1);
+    border-bottom-color: rgba(0,0,0,0.1);
+}
+.box-static.box-transparent table th {
+    background-color: rgba(0,0,0,0.05);
+}
+.box-static.box-transparent table td + td,
+.box-static.box-transparent table th + th {
+    border-left: 1px solid #ddd;
+}
+.box-static.box-transparent table th {
+    border-color: #ddd;
+}
+.box-static.box-transparent table th:first-child {
+    border-left: 0;
+}
+.box-static.box-transparent table th:last-child {
+    border-right: 0;
+}
+
+.down-arrow {
+    vertical-align: bottom;
+    line-height: 0.7;
+    padding-bottom: 10px;
+}
+
+    /*Old indents
+.indent-one {
+    text-indent: -17px;
+    padding-left: 17px;
+}
+.indent-two {
+    text-indent: -27px;
+    padding-left: 27px;
+}*/
+    #Instrument .nopadding-left > i {
+        color: #0064a4;
+        font-size: 18px;
+    }
+.tooltip-inner {
+    max-width: 200px;
+    width: 200px;
+}
+
+.alert.alert-danger.validationError {
+    display: table-cell;
+}
+
+.whole-numbers {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.col-xs-7.col-sm-8.col-md-9 > .text-right:empty + h4 {
+    text-align: right;
+}
+#Instrument {
+    color: #000;
+}
+
+.row.vertical-align .nopadding-right.text-right > input.numericInput.day-input {
+    width: 5rem;
+    display: inline-block;
+}
+.row.vertical-align .nopadding-right.text-right > div {
+    display: inline-block;
+}
+/* Vertically Align Form page elements where needed */
+.vertical-align {
+    display: table;
+    width: 100%;
+}
+.vertical-align > [class*="col-"] {
+    display: table-cell;
+    float: none;
+    vertical-align: bottom;
+}
+.vertical-align .nopadding-left,
+.vertical-align .nopadding-right {
+    vertical-align: bottom;
+    display: table-cell;
+    float: none;
+}
+.vertical-align .col-xs-12,
+.vertical-align .col-sm-12 {
+    display: table-row;
+}
+
+.vertical-align #conditionalQ {
+    margin-bottom: 15px;
+}
+
+#Instrument .alert.alert-danger.validationError {
+    display: table;
+    font-size: 16px;
+}
+
+.vertical-align .specify-other.indent2 {
+    vertical-align: top;
+    padding-left: calc(1em + 15px);
+}
+.vertical-align .specify-container {
+    display: table-cell;
+    padding-left: 15px;
+}
+.cell-calc {
+    display: table-cell;
+}
+.cell-calc > div {
+    display: table;
+    width: 100%;
+}
+.full-row {
+    display: table-row;
+    width: 100%;
+}
+.table-cell {
+    display: table-cell;
+}
+.vertical-align .specify-container.indent2 {
+    width: 63px;
+}
+.vertical-align .specify-container.indent2 + .cell-calc {
+    width: calc(100% - 63px);
+}
+.specify-container.indent2 + .cell-calc .nopadding-right.text-right input {
+    margin-right: 5px;
+}
+.specify-container.indent3 + .cell-calc .nopadding-right.text-right input {
+    margin-right: 7px;
+}
+form#Instrument .specify-container.indent2 + .cell-calc .nopadding-left label {
+    margin-left: 0;
+}
+form#Instrument .specify-container.indent3 + .cell-calc .nopadding-left label {
+    margin-left: -2px;
+}
+.vertical-align .specify-container.indent3 {
+    width: 94px;
+}
+.vertical-align .specify-container.indent3 + .cell-calc {
+    width: calc(100% - 94px);
+}
+
+@media only screen and (min-width : 480px) {
+    .vertical-align .cell-calc .full-row .col-xs-7.col-sm-8.col-md-9 {
+        width: 280px;
+    }
+
+    .vertical-align .cell-calc .full-row .col-xs-2.nopadding-right.text-right {
+        width: 110.833px;
+    }
+
+    .vertical-align .cell-calc .full-row .col-xs-3.col-sm-2.col-md-1.nopadding-left {
+        width: 166.25px;
+    }
+}
+@media only screen and (min-width : 768px) {
+    .vertical-align .cell-calc .full-row .col-xs-7.col-sm-8.col-md-9 {
+        width: 350px;
+    }
+    .vertical-align .cell-calc .full-row .col-xs-2.nopadding-right.text-right {
+        width: 120px;
+    }
+    .vertical-align .cell-calc .full-row .col-xs-3.col-sm-2.col-md-1.nopadding-left {
+        width: 119.983px;
+    }
+}
+@media only screen and (min-width : 992px) {
+    .vertical-align .cell-calc .full-row .col-xs-7.col-sm-8.col-md-9 {
+        width: 75%;
+    }
+
+    .vertical-align .cell-calc .full-row .col-xs-2.nopadding-right.text-right {
+        width: 16.666%;
+    }
+
+    .vertical-align .cell-calc .full-row .col-xs-3.col-sm-2.col-md-1.nopadding-left {
+        width: 8.333%;
+    }
+}
+/* Try Flexbox */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#wrapper {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex: none;
+}
+
+/* Test Dots */
+.addDots, .col-sm-12.specify {
+    position: relative;
+}
+.addDots:before {
+    content: '';
+    position: absolute;
+    bottom: 0.4rem;
+    width: 100%;
+    height: 0;
+    line-height: 0;
+    border-bottom: 1px dotted #333;
+}
+.addDots .question,
+.specify .specify-input {
+    display: inline;
+    z-index: 1;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #414141;
+    padding-right: 275px;
+    margin: 0;
+}
+.specify .specify-input {
+    padding-right: 0;
+    display: inline-block;
+    width: calc(100% - 275px)
+}
+.addDots .question h4 {
+    display: inline;
+    background: #fff;
+    position: relative;
+    z-index: 4;
+    margin: 0;
+}
+.addDots .answerBox,
+.specify .answerBox {
+    background: #fff;
+    position: absolute;
+    min-width: 250px;
+    bottom: 0;
+    right: 0;
+    padding-left: 2rem;
+    padding-right: 25px;
+    text-align: left;
+    z-index: 2;
+    margin-bottom: 0;
+}
+.addDots .estimateBox,
+.specify .estimateBox {
+    background: #fff;
+    position: absolute;
+    max-width: 20px;
+    bottom: 0;
+    right: 0;
+    padding-left: 6px;
+    text-align: right;
+    z-index: 3;
+}
+
+h4:empty {
+    margin: 0;
+}
+
+/*Remove dots*/
+form .row.removeMargin {
+    margin-bottom: 0;
+}
+form .row.removeDots:before {
+    border: 0;
+}
+
+
+/* Special Indents */
+div[class^='indent'], div[class*=' indent'],
+div[class^='indent'] + h4, div[class*=' indent'] + h4 {
+    display: table-cell;
+}
+.include-exclude.row > div[class^='indent'], .include-exclude.row > div[class*=' indent'],
+.include-exclude.row > div[class^='indent'] + h4, .include-exclude.row > div[class*=' indent'] + h4 {
+    display: block;
+}
+div[class^='indent'], div[class*=' indent'] {
+    font-size: 16px;
+    color: #000;
+}
+
+.indent1 {
+    width: 32px;
+}
+.include-exclude.row > .indent1 {
+    width: 100%;
+    padding-left: 32px;
+}
+
+/* Values for indent inside a col */
+.indent2 {
+    padding-left: 16px;
+    width: 48px;
+}
+/* Values for empty indent inside a col */
+.indent2:empty {
+    width: 32px;
+}
+/* Values for include/exclude indenting */
+.include-exclude.row > .indent2 {
+    width: 100%;
+    padding-left: 63px; /*48px + 15px*/
+}
+/* Values for indent inside a table row (no bootstrap padding) */
+.vertical-align > .col-xs-12 > .indent2 {
+    width: 63px;
+    padding-left: 31px; /*16px + 15px*/
+}
+/* Values for empty indent inside a table row (no bootstrap padding) */
+.vertical-align > .col-xs-12 > .indent2:empty {
+    width: 32px;
+}
+
+.indent3 {
+    padding-left: 47px;
+    width: 79px;
+}
+.indent3:empty {
+    width: 47px;
+}
+.include-exclude.row > .indent3 {
+    width: 100%;
+    padding-left: 79px; /*64px + 15px*/
+}
+.vertical-align > .col-xs-12 > .indent3,
+.followupquestion > #QuestionRow > .col-xs-7.col-sm-8.col-md-9 > .indent3 {
+    width: 94px;
+    padding-left: 62px;
+}
+.vertical-align > .col-xs-12 > .indent3:empty,
+.followupquestion > .indent3:empty {
+    width: 62px;
+}
+.followupquestion > .col-xs-12 > .indent3:empty {
+    width: 47px;
+}
+
+.indent4 {
+    padding-left: 79px;
+    width: 111px;
+}
+.indent4:empty {
+    width: 111px;
+}
+.include-exclude.row > .indent4 {
+    width: 100%;
+    padding-left: 95px; /*80px + 15px*/
+}
+.vertical-align > .col-xs-12 > .indent4 {
+    width: 127px;
+    padding-left: 94px; /*79px + 15px*/
+}
+
+.indent5 {
+    padding-left: 111px;
+    width: 143px;
+}
+.indent5:empty {
+    width: 143px;
+}
+.include-exclude.row > .indent5 {
+    width: 100%;
+    padding-left: 126px; /*111px + 15px*/
+}
+.vertical-align > .col-xs-12 > .indent5 {
+    width: 158px;
+    padding-left: 126px; /*111px + 15px*/
+}
+
+.double-indent {
+    width: 63px;
+    font-size: 16px;
+    color: #000;
+    display: table-cell;
+}
+.double-indent + h4 {
+    display: table-cell;
+}
+
+.bold.indent1 + h4 + .col-xs-12 > input {
+    margin-left: 32px;
+}
+
+/* Temporary fixes 6/22 */
+#week_1, #week_2 {
+    margin-left: 79px;
+}
+.followupquestion {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+#noncitzzero_1, #noncitzzero_2, #noncitzzero_3 {
+    margin-left: 17px;
+}
+
+
+
+.followupquestion .col-xs-12.indent2-radio input[type="radio"] {
+    margin-left: 16px;
+}
+
+.followupquestion .col-xs-12.indent3-radio input[type="radio"] {
+    margin-left: 47px;
+}
