@@ -54,14 +54,14 @@ namespace ASJ
             services.AddDbContext<ASJLegacyContext>(options =>
                             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddAntiforgery(options =>
-            {
-                options.Cookie.Name = "X-CSRF-TOKEN-COOKIEFDCRP";
-                options.Cookie.HttpOnly = true;
+            //services.AddAntiforgery(options =>
+            //{
+            //    options.Cookie.Name = "X-CSRF-TOKEN-COOKIEFDCRP";
+            //    options.Cookie.HttpOnly = true;
 
-                options.HeaderName = "X-CSRF-TOKEN-HEADERFDCRP";
-            });
-
+            //    options.HeaderName = "X-CSRF-TOKEN-HEADERFDCRP";
+            //});
+            services.AddAntiforgery(o => o.HeaderName = "XSRF-TOKEN");
 
             services.AddIdentity<AppIdentityUser, AppIdentityRole>()
                     .AddEntityFrameworkStores<AppIdentityDbContext>()
